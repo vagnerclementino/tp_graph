@@ -10,17 +10,16 @@
 
 namespace PAA {
 
-Vertex::Vertex(const std::string& vetexName) {
+Vertex::Vertex(const std::string& vetexName):edges(arcs) {
 
 	this->name = vetexName;
-	this->edges = this->arcs;
 	this->previous = NULL;
 	//Definindo valor padrão para os atributos
 	this->resetData();
 
 }
 
-Vertex::Vertex(const Vertex &other){
+Vertex::Vertex(const Vertex &other): edges(arcs){
 
 	this->name = other.getName();
 	this->arcs = other.arcs;
@@ -62,6 +61,8 @@ Vertex& Vertex::operator =(const Vertex& other) {
 
 std::ostream& operator<<(std::ostream& out, const Vertex& v) {
 
+	std::set<PAA::Edge*> edges;
+	std::set<PAA::Edge*>::iterator itEdges;
     out << "Vertex{name=" << v.getName();
     out << ", cost=" << v.getCost();
     out << ", visited=" << (v.getVisited() ? "true" : "false");
@@ -69,13 +70,18 @@ std::ostream& operator<<(std::ostream& out, const Vertex& v) {
 
     out << ", neighbors={";
     int i = 0;
-    for (Edge* edge : v.getEdges()) {
+
+    edges = v.getEdges();
+
+    for(itEdges = edges.begin(); itEdges != edges.end(); itEdges++) {
+
         if (i > 0) {
             out << ", ";
         }
         i++;
-        if (edge->getFinishVertex() != NULL) {
-            out << edge->getFinishVertex()->getName();
+
+        if ( (*itEdges)->getFinishVertex() != NULL) {
+            out << (*itEdges)->getFinishVertex()->getName();
         } else {
             out << "NULL";
         }
@@ -86,13 +92,13 @@ std::ostream& operator<<(std::ostream& out, const Vertex& v) {
 }
 
 
-std::string& Vertex::getName(void)const{
+const std::string& Vertex::getName(void)const{
 
 	return this->name;
 
 }
 
-void Vertex::setName(std::string& aName){
+void Vertex::setName(const std::string& aName){
 
 	this->name = aName;
 

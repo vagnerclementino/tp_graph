@@ -11,13 +11,19 @@
 #include <string>
 #include "Edge.h"
 
+
+
 namespace PAA {
+
+class Edge;
 
 enum Color{
 		WHITE = 0,
 		GREY = 1,
 		BLACK = 2
 	};
+
+
 
 class Vertex {
 
@@ -37,8 +43,8 @@ public:
 	virtual ~Vertex();
 
 	//Métodos para acesso e alteração do atributo 'Name'
-	std::string& getName(void)const;
-	void setName(std::string&);
+	const std::string& getName(void)const;
+	void setName(const std::string&);
 
 	//Métodos para acesso e alteração do atributo 'Cost'
 	double getCost(void)const;

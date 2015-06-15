@@ -68,6 +68,55 @@ std::ostream& operator<<(std::ostream& out, const PAA::Edge& edge) {
     return out;
 }
 
+
+	PAA::Vertex* Edge::getStartVertex(void)const{
+
+		return this->start;
+	}
+
+	void Edge::setStartVertex(PAA::Vertex* startVertex){
+
+		this->start = startVertex;
+
+	}
+
+
+	PAA::Vertex* Edge::getFinishVertex(void)const{
+
+		return this->finish;
+	}
+
+	void Edge::setFinishVertex(PAA::Vertex* finishVertex){
+
+		this->finish= finishVertex;
+
+	}
+
+	double& Edge::getWeight(void) const{
+
+		return this->weight;
+
+	}
+
+
+	void Edge::setWeight(double newWeight){
+
+		this->cost = newWeight;
+
+	}
+
+
+	bool Edge::getVisited(void) const{
+
+		return this->visited;
+	}
+
+	void Edge::setVisited(bool newVisited){
+
+		this->visited = newVisited;
+
+	}
+
 } /* namespace PAA */
 
 

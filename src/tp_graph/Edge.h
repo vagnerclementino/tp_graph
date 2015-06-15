@@ -13,6 +13,8 @@
 
 namespace PAA {
 
+class Vertex;
+
 class Edge {
 private:
 	PAA::Vertex* start;    // Vértice no início de uma aresta
