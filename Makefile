@@ -7,27 +7,21 @@ CFLAGS= -g -c -Wall -D__USE_FIXED_PROTOTYPES__ -lm -O3
 # -Wall -- Turn on all warnings 
 # -D__USE_FIXED_PROTOTYPES__ -- Force the compiler to use the correct headers
 # -ansi -- Don't use GNU extensions. Stick to ANSI C.
-PROGRAM_NAME=tp_paradigmas
+PROGRAM_NAME=tp_graph
 CRIADOR=Vagner Clementino
-PAA_LIB_PATH=../lib
-SRC_FOLDER=./src
+PAA_LIB_PATH=./src/lib
+SRC_FOLDER=./src/tp_graph
 BIN_DIR=./bin
 IN_DIR=./inputs
 OUT_DIR=./intputs
 OBJS=$(SRC_FOLDER)/main.o \
-	$(SRC_FOLDER)/Brain.o \
-	$(SRC_FOLDER)/TPInstance.o \
-	$(SRC_FOLDER)/TPParadigmas.o \
-	$(SRC_FOLDER)/FBSolution.o \
-	$(SRC_FOLDER)/FBAlgorithm.o \
-	$(SRC_FOLDER)/TPSolution.o \
-	$(SRC_FOLDER)/GreedyAlgorithm.o \
-	$(SRC_FOLDER)/PDAlgorithm.o \
-	$(PAA_LIB_PATH)/FileManager.o \
-	$(PAA_LIB_PATH)/PAAException.o \
-	$(PAA_LIB_PATH)/TrabalhoPratico.o \
-
-#INPUTFILE= $(pwd)entradas/input.txt
+	 $(PAA_LIB_PATH)/FileManager.o \
+	 $(PAA_LIB_PATH)/PAAException.o \
+	 $(PAA_LIB_PATH)/TrabalhoPratico.o \
+	 $(SRC_FOLDER)/Edge.o \
+	 $(SRC_FOLDER)/PAAGraph.o \
+	 $(SRC_FOLDER)/TPGraph.o \
+	 $(SRC_FOLDER)/Vertex.o 
 INPUTFILE=$(-i ../inputs/input.txt)
 OUTPUTFILE=$(-o ../outputs/output.txt) 
 
@@ -61,29 +55,21 @@ PAAException.o: $(PAA_LIB_PATH)/PAAException.h $(PAA_LIB_PATH)/PAAException.cpp
 TrabalhoPratico.o: TrabalhoPratico.h TrabalhoPratico.cpp
 	@$(CC) $(CFLAGS) $(PAA_LIB_PATH)/TrabalhoPratico.cpp
 
-Brain.o: Brain.h Brain.cpp
+Edge.o: Edge.h Edge.cpp
 	@$(CC) $(CFLAGS) $(PAA_LIB_PATH)/Brain.cpp
 
-TPInstance.o: TPInstance.h TPInstance.cpp
+Vertex.o: Vertex.h Vertex.cpp
 	@$(CC) $(CFLAGS) $(PAA_LIB_PATH)/TPInstance.cpp
 
-TPParadigmas.o: TPParadigmas.h TPParadigmas.cpp
-	@$(CC) $(CFLAGS) $(PAA_LIB_PATH)/TPParadigmas.cpp
+Graph.o: Graph.h
+	@$(CC) $(CFLAGS) $(PAA_LIB_PATH)/Graph.h
 	
-FBSolution.o: FBSolution.h FBSolution.cpp
-	@$(CC) $(CFLAGS) $(PAA_LIB_PATH)/FBSolution.cpp
+PAAGraph.o: PAAGraph.h PAAGraph.cpp
+	@$(CC) $(CFLAGS) $(PAA_LIB_PATH)/PAAGraph.cpp
 	
-FBAlgorithm.o: FBAlgorithm.h FBAlgorithm.cpp
-	@$(CC) $(CFLAGS) $(PAA_LIB_PATH)/FBAlgorithm.cpp
+TPGraph.o: TPGraph.h TPGraph.cpp
+	@$(CC) $(CFLAGS) $(PAA_LIB_PATH)/TPGraph.cpp
 	
-TPSolution.o: TPSolution.h TPSolution.cpp
-	@$(CC) $(CFLAGS) $(PAA_LIB_PATH)/TPSolution.cpp
-	
-TPSolution.o: GreedyAlgorithm.h GreedyAlgorithm.cpp
-	@$(CC) $(CFLAGS) $(PAA_LIB_PATH)/GreedyAlgorithm.cpp
-	
-TPSolution.o: PDAlgorithm.h PDAlgorithm.cpp
-	@$(CC) $(CFLAGS) $(PAA_LIB_PATH)/PDAlgorithm.cpp
 clean:
 	@echo "Removendo arquivos temporários e o executável..."
 	@rm -f $(OBJS) *.gch $(PROGRAM_NAME)
