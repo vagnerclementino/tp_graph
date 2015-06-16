@@ -10,6 +10,7 @@
 #include <stdexcept>
 #include "../lib/PAAException.h"
 #include "../lib/TrabalhoPratico.h"
+#include "PAAGraph.h"
 
 namespace PAA {
 
@@ -117,6 +118,17 @@ void TPGraph::run(void){
 
 	try {
 		this->showUserMessage("Iniciando a execução.");
+
+		PAA::PAAGraph graph;
+
+		graph.addVertex("1");
+		this->showUserMessage(graph.getVertex("1")->toString());
+
+		graph.addVertex("2");
+		this->showUserMessage(graph.getVertex("2")->toString());
+
+		graph.addEdge("1","2",1.0,false);
+
 		ss << "Everything is gonna be alright" << std::endl;
 
 		this->showUserMessage(ss.str());

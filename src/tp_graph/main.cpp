@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
 
 
     try {
-       	PAA::TPGraph tp (5,argv);
+       	PAA::TPGraph tp (argc,argv);
     	tp.run();
     	//Exibindo os dados da execução
     	tp.showStatistics();

@@ -75,7 +75,11 @@ public:
 	//Atributo de cópia de veŕtice para outro
 	Vertex& operator =(const Vertex& other);
 
+	//Adiciona um um aresta para um vértice
+	PAA::Edge* addEdges(PAA::Edge*);
 
+	//Remove uma aresta de vértice
+	PAA::Edge* removeEdge(PAA::Edge*);
 
 };
 

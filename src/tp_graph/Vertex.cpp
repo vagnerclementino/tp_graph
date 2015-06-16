@@ -7,6 +7,7 @@
 
 #include "Vertex.h"
 #include <sstream>
+#include "../lib/PAAException.h"
 
 namespace PAA {
 
@@ -161,6 +162,29 @@ void Vertex::setPreviousVertex(Vertex* aVertice){
 	this->previous = aVertice;
 }
 
+//Adiciona um um aresta para um vértice
+PAA::Edge* Vertex::addEdges(PAA::Edge* edge){
+	std::stringstream ss;
+	try {
 
+		this->arcs.insert(edge);
+
+	} catch (const std::exception& e) {
+
+		ss << "Erro ao inserir a aresta " << edge->toString() << ". Detalhes:  "<< e.what() << std::endl;
+
+		throw PAA::PAAException(ss.str());
+
+	}
+	this->arcs.insert(edge);
+
+	return edge;
+
+}
+
+//Remove uma aresta de vértice
+PAA::Edge* Vertex::removeEdge(PAA::Edge* edge){
+
+}
 
 } /* namespace PAA */
