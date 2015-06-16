@@ -24,7 +24,7 @@
 
 #include <string>
 #include <fstream>
-
+#include <vector>
 
 namespace PAA {
 
@@ -147,6 +147,8 @@ public:
 	 *
 	 ********************************************************/
 	bool hasMore(void);
+
+	std::vector<std::string> splitString (const char *str, char delimiter);
 
 	virtual ~FileManager();
 };

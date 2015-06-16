@@ -6,6 +6,7 @@
  */
 
 #include "PAAGraph.h"
+#include <iostream>
 
 namespace PAA {
 
@@ -16,10 +17,14 @@ PAAGraph::PAAGraph() : PAA::Graph<Vertex, Edge>() {
 
 	//Habilitando o reset dos dados de um grafo
     this->resetEnabled = true;
+    this->fm = new PAA::FileManager();
+
 }
 
 //Destrutor não sera utilizado. Sem alocação dinâmica
 PAAGraph::~PAAGraph(){
+
+	delete this->fm;
 
 }
 
@@ -244,6 +249,62 @@ void PAAGraph::removeVertex(const std::string& name) {
 
 void PAAGraph::removeVertex(Vertex* v) {
     this->removeNode(v);
+}
+
+
+void PAAGraph::load(const std::string& filePath){
+
+	 std::string line;
+	 std::vector<std::string> valuesRead;
+	 std::vector<std::string>::iterator itStr;
+	 std::stringstream ss;
+	 char delimiter = ' ';
+	 std::string vertexOriginName;
+	 int index = 0;
+
+
+	 try {
+
+		 this->fm->openFile(filePath,'R');
+
+		 while(this->fm->hasMore()){
+
+			 line = this->fm->readLine();
+
+			 if(!line.empty()){
+
+				 //Copiando os valores lidos para o vector valuesRead
+				 valuesRead = this->fm->splitString(line.c_str(),delimiter);
+
+				 for(itStr = valuesRead.begin(); itStr != valuesRead.end(); itStr++){
+
+							if(index == 0){
+
+								vertexOriginName = (*itStr);
+								this->addVertex(vertexOriginName);
+								index++;
+
+							}else{
+
+								this->addVertex((*itStr));
+								//Incluíndo aresta entre os vértices
+								this->addEdge(vertexOriginName,(*itStr),1.0,true);
+							}
+
+				 }
+
+				 valuesRead.clear();
+				 index = 0;
+
+			 }
+		 }
+
+	} catch (const std::exception& e) {
+
+		ss << "Erro ao ler o arquivo " << filePath << " Detalhes: " << e.what() << std::endl;
+
+		throw PAA::PAAException(ss.str());
+	}
 }
 
 } /* namespace PAA */

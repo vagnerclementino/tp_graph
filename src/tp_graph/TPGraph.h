@@ -63,7 +63,7 @@ public:
 	const std::string& getGraphAFileName(void)const;
 
 	//Retorna uma string com o nome do arquivo de Sybil do Grafo A
-	const std::string& getGraphASybilName(void)const;
+	const std::string getGraphASybilName(void)const;
 
 	//Retorna uma string com o nome do arquivo de entrada do Grafo
 	const std::string& getGraphBFileName(void)const;

@@ -18,7 +18,7 @@ TPGraph::TPGraph(int numArgs, char** args):TrabalhoPratico(numArgs, args) {
 	std::stringstream ss;
 	if(numArgs == this->NUMBER_OF_ARGUMENTS){
 
-		this->pProgArgs = new std::vector<std::string> (args, args + this->NUMBER_OF_ARGUMENTS);
+		this->pProgArgs = new std::vector<std::string> (args, args + numArgs);
 
 	}else{
 		ss << "O numero de argumentos informado: "<< numArgs << " não é valido" << std::endl;
@@ -60,7 +60,7 @@ const std::string& TPGraph::getGraphAFileName(void)const {
 
 }
 
-const std::string& TPGraph::getGraphASybilName(void)const {
+const std::string TPGraph::getGraphASybilName(void)const {
 	std::stringstream ss;
 	if( assertProgArgs()){
 		try {
@@ -115,19 +115,14 @@ void TPGraph::showStatistics(void){
 
 void TPGraph::run(void){
 	std::stringstream ss;
+	std::string graphAfile;
 
 	try {
 		this->showUserMessage("Iniciando a execução.");
 
 		PAA::PAAGraph graph;
-
-		graph.addVertex("1");
-		this->showUserMessage(graph.getVertex("1")->toString());
-
-		graph.addVertex("2");
-		this->showUserMessage(graph.getVertex("2")->toString());
-
-		graph.addEdge("1","2",1.0,false);
+		graphAfile = this->getGraphAFileName();
+		graph.load(graphAfile);
 
 		ss << "Everything is gonna be alright" << std::endl;
 

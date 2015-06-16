@@ -10,6 +10,7 @@
 #include "Edge.h"
 #include "Vertex.h"
 #include "Graph.h"
+#include "../lib/FileManager.h"
 
 
 namespace PAA {
@@ -18,6 +19,8 @@ class PAAGraph: public Graph<PAA::Vertex, PAA::Edge> {
 
 private:
 	bool resetEnabled;
+	PAA::FileManager* fm;
+
 public:
 	PAAGraph();
 	virtual ~PAAGraph();
@@ -76,6 +79,8 @@ public:
 
 	void removeVertex(const std::string& name);
 	void removeVertex(Vertex* v);
+
+	void load(const std::string&);
 
 };
 

@@ -13,6 +13,7 @@
 #include <fstream>
 #include <locale>
 #include <sstream>
+#include <vector>
 
 namespace PAA {
 
@@ -266,6 +267,23 @@ std::string FileManager::readLine(void){
 	}
 
 	return line;
+}
+
+std::vector<std::string> FileManager::splitString (const char *str, char delimiter){
+
+	    std::vector<std::string> result;
+
+	    do
+	    {
+	        const char *begin = str;
+
+	        while(*str != delimiter && *str)
+	            str++;
+
+	        result.push_back(std::string(begin, str));
+	    } while (0 != *str++);
+
+	    return result;
 }
 
 }/* namespace PAA */
