@@ -13,7 +13,7 @@ PAA_LIB_PATH=./src/lib
 SRC_FOLDER=./src/tp_graph
 BIN_DIR=./bin
 IN_DIR=./inputs
-OUT_DIR=./intputs
+OUT_DIR=./outputs
 OBJS=$(SRC_FOLDER)/main.o \
 	 $(PAA_LIB_PATH)/FileManager.o \
 	 $(PAA_LIB_PATH)/PAAException.o \
