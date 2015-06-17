@@ -12,6 +12,7 @@
 #include "../lib/TrabalhoPratico.h"
 #include "PAAGraph.h"
 #include <iostream>
+#include "SybilFinder.h"
 
 namespace PAA {
 
@@ -118,7 +119,9 @@ void TPGraph::showStatistics(void){
 
 void TPGraph::run(void){
 	std::stringstream ss;
-	std::string graphAFilePath;//string do caminho do arquivo para o Grafo A
+	//string do caminho do arquivo para o Grafo A
+	std::string graphAFilePath;
+	std::string graphASybilFile;
 	std::set<PAA::Vertex*> honestSet;
 	std::set<PAA::Vertex*>::iterator it;
 
@@ -126,6 +129,7 @@ void TPGraph::run(void){
 		this->showUserMessage("Iniciando a execução.");
 
 		PAA::PAAGraph graph;
+		PAA::SybilFinder sybilFinder;
 		graphAFilePath = this->getGraphAFileName();
 
 		//Carregando os vértices e aresta do arquivo
@@ -144,6 +148,13 @@ void TPGraph::run(void){
 			std::cout << (*it)->toString() << std::endl;
 		}
 
+		graphASybilFile = this->getGraphASybilName();
+
+		sybilFinder.loadSybilFile(graphASybilFile);
+
+		sybilFinder.printRealSybilVertex();
+
+		sybilFinder.find(graph);
 
 
 		this->showUserMessage(ss.str());

@@ -11,7 +11,7 @@
 #include "Vertex.h"
 #include "Edge.h"
 #include "../lib/FileManager.h"
-#include "Graph.h"
+#include "PAAGraph.h"
 
 namespace PAA {
 
@@ -21,19 +21,33 @@ private:
 	std::set<PAA::Vertex*> honestVertex;
 	std::set<PAA::Vertex*> sybilVertex;
 	std::set<PAA::Vertex*> seeds;
+
+	//Conjunto dos vértice previamente definidos como Sybil
+	std::set<std::string> realSybilVertex;
+
+	//Percentual de vértices que serão utilizados como "semente"
+	const static double SEED_PERCENT = 0.2;
+
+
 	PAA::FileManager* fm;
-	const static double SEED_PERCENT;
-	int seedLength; //Numero de vértices em "seeds"
 public:
 	SybilFinder();
 	void loadSybilFile(std::string&);
-	void find(Graph<PAA::Vertex, PAA::Edge>&);
-	const std::set<PAA::Vertex*> getHonestVertexSet() const;
-	const std::set<PAA::Vertex*> getSybiltVertexSet() const;
+	void find(PAA::PAAGraph&);
+	const std::set<PAA::Vertex*>& getHonestVertexSet() const;
+	const std::set<PAA::Vertex*>& getSybiltVertexSet() const;
+	const void printRealSybilVertex(void) const;
+	const void printSeedVertex(void) const;
 	virtual ~SybilFinder();
+private:
+	void addRealSybilVertex(std::string&);
+	std::set<PAA::Vertex*> chooseSeed(std::set<PAA::Vertex*>&);
+	int getSeedSize(int honestSetSize);
+	void addSeeds(PAA::Vertex*);
+	void setSeedsSet(std::set<PAA::Vertex*>&);
 };
 
-const static double SEED_PERCENT= .2;
+
 
 } /* namespace PAA */
 

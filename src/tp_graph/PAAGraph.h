@@ -96,7 +96,7 @@ public:
 
 	int sizeHonestVertex(void);
 
-	const std::set<Vertex*> getHonestSet();
+	std::set<Vertex*>& getHonestSet();
 
 
 };

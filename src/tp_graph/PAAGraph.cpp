@@ -291,7 +291,7 @@ int PAAGraph::sizeHonestVertex(void){
 
 }
 
-const std::set<Vertex*> PAAGraph::getHonestSet(){
+std::set<Vertex*>& PAAGraph::getHonestSet(){
 
 	return this->honestSet;
 }
@@ -302,7 +302,7 @@ void PAAGraph::load(const std::string& filePath){
 	 std::vector<std::string> valuesRead;
 	 std::vector<std::string>::iterator itStr;
 	 std::stringstream ss;
-	 char delimiter = ' ';
+	 const char delimiter = ' ';
 	 std::string vertexOriginName;
 	 /*
 	  * /Determina se o vértice carregado é o vertice fonte, ou seja, de
