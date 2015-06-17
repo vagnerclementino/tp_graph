@@ -35,6 +35,7 @@ private:
 	bool visited;       		 // Define se o vértice já foi visitado; valor padrão igual false
 	PAA::Color color;			// Define a cor de vértice; valor padrão BRANCO
 	Vertex* previous;   		// Vértice que vem antes deste, valor padrão igual a NULL
+	bool isSybil;			    // Define se o um vértice é Sybil - Default TRUE
 
 public:
 	Vertex(const std::string& name = "");
@@ -65,6 +66,10 @@ public:
 	//Métodos para acesso e alteração do atributo 'previous'
 	Vertex* getPreviousVertex(void) const;
 	void setPreviousVertex(Vertex*);
+
+	//Métodos para acesso e alteração do atributo 'isSybil'
+	bool getIsSybil(void) const;
+	void setIsSybil(bool);
 
 	//Retorna os valores dos atributos para seu valor padrão
 	void resetData(void);

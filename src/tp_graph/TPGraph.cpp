@@ -11,6 +11,7 @@
 #include "../lib/PAAException.h"
 #include "../lib/TrabalhoPratico.h"
 #include "PAAGraph.h"
+#include <iostream>
 
 namespace PAA {
 
@@ -57,7 +58,7 @@ const std::string& TPGraph::getGraphAFileName(void)const {
 		}
 
 	}
-
+	return NULL;
 }
 
 const std::string TPGraph::getGraphASybilName(void)const {
@@ -72,7 +73,7 @@ const std::string TPGraph::getGraphASybilName(void)const {
 		}
 
 	}
-
+	return NULL;
 }
 
 const std::string& TPGraph::getGraphBFileName(void)const {
@@ -87,13 +88,14 @@ const std::string& TPGraph::getGraphBFileName(void)const {
 		}
 
 	}
-
+	return NULL;
 }
 
 const std::string& TPGraph::getGraphBSybilName(void)const{
 	std::stringstream ss;
 	if( assertProgArgs()){
 		try {
+
 			return this->pProgArgs->at(this->GRAPH_B_SYBIL_FILE_POS);
 
 		} catch (const std::out_of_range& oor) {
@@ -103,10 +105,11 @@ const std::string& TPGraph::getGraphBSybilName(void)const{
 
 	}
 
+	return NULL;
 }
 
 void TPGraph::showUserMessage(const std::string& message){
-	PAA:TrabalhoPratico::showUserMessage(message);
+	PAA::TrabalhoPratico::showUserMessage(message);
 }
 
 void TPGraph::showStatistics(void){
@@ -115,16 +118,33 @@ void TPGraph::showStatistics(void){
 
 void TPGraph::run(void){
 	std::stringstream ss;
-	std::string graphAfile;
+	std::string graphAFilePath;//string do caminho do arquivo para o Grafo A
+	std::set<PAA::Vertex*> honestSet;
+	std::set<PAA::Vertex*>::iterator it;
 
 	try {
 		this->showUserMessage("Iniciando a execução.");
 
 		PAA::PAAGraph graph;
-		graphAfile = this->getGraphAFileName();
-		graph.load(graphAfile);
+		graphAFilePath = this->getGraphAFileName();
 
-		ss << "Everything is gonna be alright" << std::endl;
+		//Carregando os vértices e aresta do arquivo
+		graph.load(graphAFilePath);
+
+		ss << "Total de vertices: " << graph.size() << std::endl;
+
+
+		ss << "Total de vertices honesto: " << graph.sizeHonestVertex() << std::endl;
+
+		honestSet = graph.getHonestSet();
+
+
+		for(it = honestSet.begin(); it != honestSet.end();it++){
+
+			std::cout << (*it)->toString() << std::endl;
+		}
+
+
 
 		this->showUserMessage(ss.str());
 		this->showUserMessage("Finalizando a execução.");

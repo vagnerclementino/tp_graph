@@ -20,6 +20,14 @@ class PAAGraph: public Graph<PAA::Vertex, PAA::Edge> {
 private:
 	bool resetEnabled;
 	PAA::FileManager* fm;
+	/*Define o total k primeiros vértices que deverão ser considerados como honesto,
+	 * ou seja, NÃO-SYBIL
+	 */
+	static const int FIRSTS_HONESTS_VERTEX = 10; //
+
+	std::set<PAA::Vertex*> honestSet;
+
+	Vertex* addToHonestSet(PAA::Vertex*);
 
 public:
 	PAAGraph();
@@ -64,7 +72,11 @@ public:
 	Edge* addEdge(Vertex* v1, Vertex* v2, double cost = 0.0, bool directed = true);
 	Edge* addEdge(Edge* e, bool directed = true);
 	Vertex* addVertex(const std::string& name);
+	Vertex* addHonestVertex(const std::string& name);
+	Vertex* setVertexAsHonest(const std::string& name);
 	Vertex* addVertex(Vertex* v);
+
+
 
 	const std::set<Edge*>& getEdgeSet() const;
 	const std::set<Edge*>& getEdgeSet(Vertex* v) const;
@@ -81,6 +93,11 @@ public:
 	void removeVertex(Vertex* v);
 
 	void load(const std::string&);
+
+	int sizeHonestVertex(void);
+
+	const std::set<Vertex*> getHonestSet();
+
 
 };
 

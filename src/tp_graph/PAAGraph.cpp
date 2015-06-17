@@ -124,7 +124,7 @@ bool PAAGraph::isNeighbor(Vertex* v1, Vertex* v2) const {
 
 	std::set<PAA::Edge*>::iterator itEdges;
 
-	for(itEdges = this->getEdgeSet(v1).begin(); itEdges != this->getEdgeSet(v1).end();itEdges){
+	for(itEdges = this->getEdgeSet(v1).begin(); itEdges != this->getEdgeSet(v1).end();itEdges++){
 
 		if( (*itEdges)->getFinishVertex() == v2){
 			return true;
@@ -205,6 +205,28 @@ Vertex* PAAGraph::addVertex(Vertex* v) {
     return this->addNode(v);
 }
 
+Vertex* PAAGraph::addHonestVertex(const std::string& name){
+
+	PAA::Vertex* honestVertex = new PAA::Vertex(name);
+	honestVertex->setIsSybil(false);
+	this->addToHonestSet(honestVertex);
+	return this->addNode(honestVertex);
+
+}
+
+Vertex* PAAGraph::setVertexAsHonest(const std::string& name){
+
+	PAA::Vertex* honest;
+
+	honest = this->getVertex(name);
+
+	honest->setIsSybil(false);
+
+	this->addToHonestSet(honest);
+
+	return honest;
+}
+
 const std::set<Edge*>& PAAGraph::getEdgeSet() const {
     return this->getArcSet();
 }
@@ -252,6 +274,28 @@ void PAAGraph::removeVertex(Vertex* v) {
 }
 
 
+Vertex*  PAAGraph::addToHonestSet(PAA::Vertex* v){
+
+	if(this->honestSet.size() < this->FIRSTS_HONESTS_VERTEX){
+
+		this->honestSet.insert(v);
+		return v;
+	}else{
+		return NULL;
+	}
+}
+
+int PAAGraph::sizeHonestVertex(void){
+
+	return this->honestSet.size();
+
+}
+
+const std::set<Vertex*> PAAGraph::getHonestSet(){
+
+	return this->honestSet;
+}
+
 void PAAGraph::load(const std::string& filePath){
 
 	 std::string line;
@@ -260,8 +304,15 @@ void PAAGraph::load(const std::string& filePath){
 	 std::stringstream ss;
 	 char delimiter = ' ';
 	 std::string vertexOriginName;
-	 int index = 0;
-
+	 /*
+	  * /Determina se o vértice carregado é o vertice fonte, ou seja, de
+	  * onde sai as arestas
+	  *
+	  * */
+	 bool isVertexSource = true;
+	 int vertexHonestInserted = 0;//Total de vértices honesto inseridos até  o momento
+	 PAA::Vertex* vertexAux;
+	 PAA::Edge* edgeAux;
 
 	 try {
 
@@ -273,28 +324,85 @@ void PAAGraph::load(const std::string& filePath){
 
 			 if(!line.empty()){
 
+				 std::cout << line << " - " << line.size() << std::endl;
+
 				 //Copiando os valores lidos para o vector valuesRead
 				 valuesRead = this->fm->splitString(line.c_str(),delimiter);
 
+				 std::cout << "Tamanho valores lido: " << valuesRead.size() << std::endl;
+
 				 for(itStr = valuesRead.begin(); itStr != valuesRead.end(); itStr++){
 
-							if(index == 0){
 
-								vertexOriginName = (*itStr);
-								this->addVertex(vertexOriginName);
-								index++;
+
+							if(isVertexSource){
+
+								 vertexOriginName = (*itStr);
+
+								if(vertexHonestInserted < this->FIRSTS_HONESTS_VERTEX){
+
+									if(!this->containsVertex(*itStr)){
+
+										vertexAux = this->addHonestVertex(vertexOriginName);
+										vertexHonestInserted++;
+										if (vertexAux) {
+
+											std::cout << vertexAux->toString()
+													<< std::endl;
+
+										}
+
+									}else{
+
+										vertexAux = this->setVertexAsHonest(vertexOriginName);
+										vertexHonestInserted++;
+										if (vertexAux) {
+
+											std::cout << vertexAux->toString()
+													<< std::endl;
+
+										}
+									}
+
+
+								}else{
+
+									if(!this->containsVertex(*itStr)){
+
+										vertexAux = this->addVertex(vertexOriginName);
+										if (vertexAux){
+
+											std::cout << vertexAux->toString() << std::endl;
+
+
+										}
+									}
+
+								}
+
+
+								isVertexSource = false;
 
 							}else{
 
-								this->addVertex((*itStr));
+								if(!this->containsVertex((*itStr))){
+									this->addVertex((*itStr));
+								}
+
 								//Incluíndo aresta entre os vértices
-								this->addEdge(vertexOriginName,(*itStr),1.0,true);
+								edgeAux = this->addEdge(vertexOriginName,(*itStr),1.0,true);
+
+								if(edgeAux){
+
+									std::cout << edgeAux->toString() << std::endl;
+
+								}
 							}
 
 				 }
 
 				 valuesRead.clear();
-				 index = 0;
+				 isVertexSource = true;
 
 			 }
 		 }

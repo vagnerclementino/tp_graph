@@ -13,6 +13,7 @@
 #include <sstream>
 #include <vector>
 #include "../lib/PAAException.h"
+#include <stdexcept>
 
 namespace PAA {
 
@@ -378,7 +379,21 @@ const std::set<NodeType*> Graph<NodeType, ArcType>::getNeighbors(const std::stri
 
 template <typename NodeType, typename ArcType>
 NodeType* Graph<NodeType, ArcType>::getNode(const std::string& name) const {
-    return nodeMap.at(name);
+
+	if(this->nodeMap.size() == 0){
+		return NULL;
+	}
+	else{
+		try {
+
+			return nodeMap.at(name);
+
+		 } catch (const std::out_of_range& oor) {
+
+			return NULL;
+		}
+	}
+
 }
 
 template <typename NodeType, typename ArcType>
@@ -523,47 +538,8 @@ bool Graph<NodeType, ArcType>::containsKey(const std::string& name) const{
 	return this->nodeMap.find(name) != this->nodeMap.end();
 }
 
-template <typename NodeType, typename ArcType>
-void Graph<NodeType, ArcType>::deepCopy(const Graph& src) {
-    /*for (NodeType* oldNode : src.nodes) {
-        NodeType* newNode = new NodeType();
-        *newNode = *oldNode;
-        newNode->arcs.clear();
-        addNode(newNode);
-    }
-    for (ArcType* oldArc : src.arcs) {
-        ArcType* newArc = new ArcType();
-        *newArc = *oldArc;
-        newArc->start = getExistingNode(oldArc->start->name, "deepCopy");
-        newArc->finish = getExistingNode(oldArc->finish->name, "deepCopy");
-        addArc(newArc);
-    }
-    */
-}
 
 
-template <typename NodeType, typename ArcType>
-std::ostream& operator <<(std::ostream& os, const Graph<NodeType, ArcType>& g) {
-    /*os << "{";
-    bool started = false;
-    for (NodeType *node : g.getNodeSet()) {
-        if (started) {
-            os << ", ";
-        }
-        writeGenericValue(os, node->name, stringIsInteger(node->name) || stringIsReal(node->name));
-        g.writeNodeData(os, node);
-        started = true;
-    }
-    for (ArcType* arc : g.getArcSet()) {
-        os << ", ";
-        writeGenericValue(os, arc->start->name, stringIsInteger(arc->start->name) || stringIsReal(arc->start->name));
-        os << " -> ";
-        writeGenericValue(os, arc->finish->name, stringIsInteger(arc->finish->name) || stringIsReal(arc->finish->name));
-        g.writeArcData(os, arc);
-    }
-    return os << "}";
-    */
-}
 } /* namespace PAA */
 
 #endif /* GRAPH_H_ */

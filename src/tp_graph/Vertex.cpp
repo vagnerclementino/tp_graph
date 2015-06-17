@@ -36,10 +36,14 @@ Vertex::~Vertex() {
 }
 
 void Vertex::resetData() {
+
     this->setCost(0.0);
     this->setPreviousVertex(NULL);
     this->setVisited(false);
     this->setColor(WHITE);
+    this->setIsSybil(true);
+
+
 
 }
 
@@ -125,6 +129,18 @@ bool Vertex::getVisited(void)const{
 void Vertex::setVisited(bool aVisited){
 
 	this->visited = aVisited;
+
+}
+
+//Métodos para acesso e alteração do atributo 'isSybil'
+void Vertex::setIsSybil(bool sybilFlag){
+
+	this->isSybil = sybilFlag;
+}
+
+bool Vertex::getIsSybil(void) const{
+
+	return this->isSybil;
 
 }
 

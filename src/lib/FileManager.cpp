@@ -272,15 +272,21 @@ std::string FileManager::readLine(void){
 std::vector<std::string> FileManager::splitString (const char *str, char delimiter){
 
 	    std::vector<std::string> result;
+	    std::string strValue;
 
 	    do
 	    {
 	        const char *begin = str;
 
-	        while(*str != delimiter && *str)
+	        while(*str != delimiter && *str){
 	            str++;
+	        }
+	        strValue = std::string(begin, str);
+	        if(!strValue.empty()){
 
-	        result.push_back(std::string(begin, str));
+	        	result.push_back(strValue);
+	        }
+
 	    } while (0 != *str++);
 
 	    return result;
