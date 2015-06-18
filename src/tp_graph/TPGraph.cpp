@@ -122,8 +122,8 @@ void TPGraph::run(void){
 	//string do caminho do arquivo para o Grafo A
 	std::string graphAFilePath;
 	std::string graphASybilFile;
-	std::set<PAA::Vertex*> honestSet;
-	std::set<PAA::Vertex*>::iterator it;
+	std::set<std::string> honestSet;
+	std::set<std::string>::iterator it;
 
 	try {
 		this->showUserMessage("Iniciando a execução.");
@@ -140,13 +140,7 @@ void TPGraph::run(void){
 
 		ss << "Total de vertices honesto: " << graph.sizeHonestVertex() << std::endl;
 
-		honestSet = graph.getHonestSet();
-
-
-		for(it = honestSet.begin(); it != honestSet.end();it++){
-
-			std::cout << (*it)->toString() << std::endl;
-		}
+		graph.printHonestSet();
 
 		graphASybilFile = this->getGraphASybilName();
 
@@ -155,6 +149,8 @@ void TPGraph::run(void){
 		sybilFinder.printRealSybilVertex();
 
 		sybilFinder.find(graph);
+
+		sybilFinder.printHonestVertex();
 
 
 		this->showUserMessage(ss.str());

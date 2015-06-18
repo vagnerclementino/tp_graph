@@ -25,9 +25,9 @@ private:
 	 */
 	static const int FIRSTS_HONESTS_VERTEX = 10; //
 
-	std::set<PAA::Vertex*> honestSet;
+	std::set<std::string> honestSet;
 
-	Vertex* addToHonestSet(PAA::Vertex*);
+	std::string addToHonestSet(std::string&);
 
 public:
 	PAAGraph();
@@ -74,6 +74,7 @@ public:
 	Vertex* addVertex(const std::string& name);
 	Vertex* addHonestVertex(const std::string& name);
 	Vertex* setVertexAsHonest(const std::string& name);
+	Vertex* setVertexAsSybil(const std::string& name);
 	Vertex* addVertex(Vertex* v);
 
 
@@ -96,7 +97,9 @@ public:
 
 	int sizeHonestVertex(void);
 
-	std::set<Vertex*>& getHonestSet();
+	std::set<PAA::Vertex*>& getHonestSet();
+
+	void printHonestSet(void) const;
 
 
 };

@@ -205,14 +205,7 @@ Vertex* PAAGraph::addVertex(Vertex* v) {
     return this->addNode(v);
 }
 
-Vertex* PAAGraph::addHonestVertex(const std::string& name){
 
-	PAA::Vertex* honestVertex = new PAA::Vertex(name);
-	honestVertex->setIsSybil(false);
-	this->addToHonestSet(honestVertex);
-	return this->addNode(honestVertex);
-
-}
 
 Vertex* PAAGraph::setVertexAsHonest(const std::string& name){
 
@@ -222,9 +215,18 @@ Vertex* PAAGraph::setVertexAsHonest(const std::string& name){
 
 	honest->setIsSybil(false);
 
-	this->addToHonestSet(honest);
-
 	return honest;
+}
+
+Vertex* PAAGraph::setVertexAsSybil(const std::string& name){
+
+	PAA::Vertex* sybil;
+
+	sybil = this->getVertex(name);
+
+	sybil->setIsSybil(true);
+
+	return sybil;
 }
 
 const std::set<Edge*>& PAAGraph::getEdgeSet() const {
@@ -274,7 +276,7 @@ void PAAGraph::removeVertex(Vertex* v) {
 }
 
 
-Vertex*  PAAGraph::addToHonestSet(PAA::Vertex* v){
+std::string PAAGraph::addToHonestSet(std::string& v){
 
 	if(this->honestSet.size() < this->FIRSTS_HONESTS_VERTEX){
 
@@ -291,11 +293,44 @@ int PAAGraph::sizeHonestVertex(void){
 
 }
 
-std::set<Vertex*>& PAAGraph::getHonestSet(){
+std::set<PAA::Vertex*>& PAAGraph::getHonestSet(){
 
-	return this->honestSet;
+	std::set<PAA::Vertex*> resultSet;
+	std::set<std::string>::iterator it;
+
+	for(it = this->honestSet.begin(); it != this->honestSet.end(); it++){
+
+		resultSet.insert(this->getVertex((*it)));
+	}
+
+	return resultSet;
 }
 
+void PAAGraph::printHonestSet(void) const{
+	std::set<std::string>::iterator it;
+		std::stringstream ss;
+		int i = 0;
+
+		if(this->honestSet.empty()){
+
+			ss << "{ }" << std::endl;
+		}else{
+
+				ss << "{";
+
+				for(it = this->honestSet.begin(); it != this->honestSet.end(); it++){
+					if (i > 0) {
+						ss << ", ";
+					}
+					i++;
+
+					ss << (*it);
+
+				}
+				ss << "}";
+		}
+		std::cout << ss.str() << std::endl;
+}
 void PAAGraph::load(const std::string& filePath){
 
 	 std::string line;
@@ -315,104 +350,76 @@ void PAAGraph::load(const std::string& filePath){
 	 PAA::Edge* edgeAux;
 
 	 try {
-
 		 this->fm->openFile(filePath,'R');
-
 		 while(this->fm->hasMore()){
 
 			 line = this->fm->readLine();
-
 			 if(!line.empty()){
 
-				 std::cout << line << " - " << line.size() << std::endl;
+				std::cout << line << " - " << line.size() << std::endl;
+				//Copiando os valores lidos para o vector valuesRead
+				valuesRead = this->fm->splitString(line.c_str(), delimiter);
+				std::cout << "Tamanho valores lido: " << valuesRead.size() << std::endl;
 
-				 //Copiando os valores lidos para o vector valuesRead
-				 valuesRead = this->fm->splitString(line.c_str(),delimiter);
+				for(itStr = valuesRead.begin(); itStr != valuesRead.end(); itStr++){
 
-				 std::cout << "Tamanho valores lido: " << valuesRead.size() << std::endl;
+					if(isVertexSource){
 
-				 for(itStr = valuesRead.begin(); itStr != valuesRead.end(); itStr++){
+						vertexOriginName = (*itStr);
 
+						//
+						if (vertexHonestInserted
+								< this->FIRSTS_HONESTS_VERTEX) {
 
+							//Inserido um vértice honesto
+							this->addToHonestSet(vertexOriginName);
+							vertexHonestInserted++;
 
-							if(isVertexSource){
+						}
 
-								 vertexOriginName = (*itStr);
+						if(!this->containsVertex(vertexOriginName)) {
 
-								if(vertexHonestInserted < this->FIRSTS_HONESTS_VERTEX){
+							vertexAux = this->addVertex(vertexOriginName);
 
-									if(!this->containsVertex(*itStr)){
+						}
 
-										vertexAux = this->addHonestVertex(vertexOriginName);
-										vertexHonestInserted++;
-										if (vertexAux) {
-
-											std::cout << vertexAux->toString()
-													<< std::endl;
-
-										}
-
-									}else{
-
-										vertexAux = this->setVertexAsHonest(vertexOriginName);
-										vertexHonestInserted++;
-										if (vertexAux) {
-
-											std::cout << vertexAux->toString()
-													<< std::endl;
-
-										}
-									}
+						if (vertexAux) {
 
 
-								}else{
+							std::cout << vertexAux->toString() << std::endl;
 
-									if(!this->containsVertex(*itStr)){
+						}
+						isVertexSource = false;
+					}else{
 
-										vertexAux = this->addVertex(vertexOriginName);
-										if (vertexAux){
+						if (!this->containsVertex((*itStr))) {
+							this->addVertex((*itStr));
+						}
+						//Incluíndo aresta entre os vértices
+						edgeAux = this->addEdge(vertexOriginName, (*itStr), 1.0,true);
+						if (edgeAux) {
 
-											std::cout << vertexAux->toString() << std::endl;
+							std::cout << edgeAux->toString() << std::endl;
 
+						}
 
-										}
-									}
-
-								}
-
-
-								isVertexSource = false;
-
-							}else{
-
-								if(!this->containsVertex((*itStr))){
-									this->addVertex((*itStr));
-								}
-
-								//Incluíndo aresta entre os vértices
-								edgeAux = this->addEdge(vertexOriginName,(*itStr),1.0,true);
-
-								if(edgeAux){
-
-									std::cout << edgeAux->toString() << std::endl;
-
-								}
-							}
-
-				 }
-
-				 valuesRead.clear();
-				 isVertexSource = true;
+					}
+				}
 
 			 }
+
+			 valuesRead.clear();
+			 isVertexSource = true;
+
 		 }
 
-	} catch (const std::exception& e) {
+	 }catch (const std::exception& e) {
 
-		ss << "Erro ao ler o arquivo " << filePath << " Detalhes: " << e.what() << std::endl;
+		 ss << "Erro ao ler o arquivo " << filePath << " Detalhes: " << e.what() << std::endl;
 
-		throw PAA::PAAException(ss.str());
-	}
+		 throw PAA::PAAException(ss.str());
+	 }
+
 }
 
 } /* namespace PAA */

@@ -105,7 +105,35 @@ const void SybilFinder::printSeedVertex(void) const{
 					}
 					i++;
 
-					ss << (*it)->toString();
+					ss << (*it)->getName();
+
+				}
+				ss << "}";
+		}
+		std::cout << ss.str() << std::endl;
+
+}
+
+const void SybilFinder::printHonestVertex(void) const{
+
+		std::set<PAA::Vertex*>::iterator it;
+		std::stringstream ss;
+		int i = 0;
+
+		if(this->honestVertex.empty()){
+
+			ss << "{ }" << std::endl;
+		}else{
+
+				ss << "{";
+
+				for(it = this->honestVertex.begin(); it != this->honestVertex.end(); it++){
+					if (i > 0) {
+						ss << ", ";
+					}
+					i++;
+
+					ss << (*it)->getName();
 
 				}
 				ss << "}";
@@ -166,12 +194,26 @@ void SybilFinder::setSeedsSet(std::set<PAA::Vertex*>& seeds){
 
 }
 
+Vertex* SybilFinder::addToHonestSet(PAA::Vertex* v){
+
+
+	this->honestVertex.insert(v);
+	return v;
+
+}
+
 void SybilFinder::find(PAA::PAAGraph& graph){
 
 	//Escolhendo aleatoriamente vértices como sementes
 	std::set<PAA::Vertex*> seeds = this->chooseSeed(graph.getHonestSet());
+	std::set<PAA::Vertex*>::iterator it;
 
-	//Armazendo a sementes escolhidas
+	for(it = seeds.begin(); it != seeds.end(); it++){
+
+		this->addToHonestSet(*(it));
+
+	}
+
 	this->setSeedsSet(seeds);
 
 	this->printSeedVertex();

@@ -38,6 +38,7 @@ public:
 	const std::set<PAA::Vertex*>& getSybiltVertexSet() const;
 	const void printRealSybilVertex(void) const;
 	const void printSeedVertex(void) const;
+	const void printHonestVertex(void) const;
 	virtual ~SybilFinder();
 private:
 	void addRealSybilVertex(std::string&);
@@ -45,6 +46,7 @@ private:
 	int getSeedSize(int honestSetSize);
 	void addSeeds(PAA::Vertex*);
 	void setSeedsSet(std::set<PAA::Vertex*>&);
+	Vertex* addToHonestSet(PAA::Vertex*);
 };
 
 
