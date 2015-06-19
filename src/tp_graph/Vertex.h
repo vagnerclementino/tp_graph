@@ -86,6 +86,15 @@ public:
 	//Remove uma aresta de vértice
 	PAA::Edge* removeEdge(PAA::Edge*);
 
+	//Número de aresta para vizinhos que são honesto
+	int getNumberEdgesAA(void);
+
+	//Número de aresta para vértices não honesto (Sybil)
+	int getNumberEdgesAB(void);
+
+	//Número de aresta para vértices não honesto (Sybil)
+	int getNumberEdgesBB(void);
+
 };
 
 	//Método para permitir que o vértice seja impresso em stream de saída

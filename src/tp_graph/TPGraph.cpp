@@ -146,12 +146,15 @@ void TPGraph::run(void){
 
 		sybilFinder.loadSybilFile(graphASybilFile);
 
-		sybilFinder.printRealSybilVertex();
-
 		sybilFinder.find(graph);
 
-		sybilFinder.printHonestVertex();
+		sybilFinder.printSeedVertexSet();
 
+		sybilFinder.printRealSybilVertexSet();
+
+		sybilFinder.printHonestVertexSet();
+
+		sybilFinder.printSybilVertexSet();
 
 		this->showUserMessage(ss.str());
 		this->showUserMessage("Finalizando a execução.");

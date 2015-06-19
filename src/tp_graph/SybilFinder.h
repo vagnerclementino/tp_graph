@@ -36,17 +36,23 @@ public:
 	void find(PAA::PAAGraph&);
 	const std::set<PAA::Vertex*>& getHonestVertexSet() const;
 	const std::set<PAA::Vertex*>& getSybiltVertexSet() const;
-	const void printRealSybilVertex(void) const;
-	const void printSeedVertex(void) const;
-	const void printHonestVertex(void) const;
+	const void printRealSybilVertexSet(void) const;
+	const void printSeedVertexSet(void) const;
+	const void printHonestVertexSet(void) const;
+	const void printSybilVertexSet(void) const;
+	const void printCandidateVertexSet(std::set<PAA::Vertex*>&) const;
 	virtual ~SybilFinder();
 private:
 	void addRealSybilVertex(std::string&);
 	std::set<PAA::Vertex*> chooseSeed(std::set<PAA::Vertex*>&);
+	std::set<PAA::Vertex*> getSybilCandidates(std::set<PAA::Vertex*>, std::set<PAA::Vertex*>);
 	int getSeedSize(int honestSetSize);
 	void addSeeds(PAA::Vertex*);
 	void setSeedsSet(std::set<PAA::Vertex*>&);
 	Vertex* addToHonestSet(PAA::Vertex*);
+	Vertex* addToSybilSet(PAA::Vertex*);
+	float calculeCondutanciaNorm(PAA::PAAGraph&);
+
 };
 
 

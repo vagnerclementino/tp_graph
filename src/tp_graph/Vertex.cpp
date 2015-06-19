@@ -203,4 +203,92 @@ PAA::Edge* Vertex::removeEdge(PAA::Edge* edge){
 
 }
 
+//Número de aresta para vizinhos que são honesto
+int Vertex::getNumberEdgesAA(void){
+
+	std::set<PAA::Edge*>::iterator itArcs;
+	int numberEdgesAA = 0;
+
+
+	if(!this->getIsSybil()){
+		//Se o vértice não é o honesto o valor de numberEdgesAA podera ser maior do que 0 (zero)
+
+		for(itArcs = this->arcs.begin(); itArcs != this->arcs.end(); itArcs++){
+
+			if(  !(*itArcs)->getFinishVertex()->getIsSybil()){
+				//Se o vértice é honsto soma-se 1
+				numberEdgesAA++;
+			}
+
+
+		}
+
+	}else{
+		//Para um vértice não honesto o valor será igual a 0 (zero)
+
+		numberEdgesAA = 0;
+	}
+
+	return numberEdgesAA;
+
+}
+
+//Número de aresta para vértices não honesto (Sybil)
+int Vertex::getNumberEdgesAB(void){
+
+	std::set<PAA::Edge*>::iterator itArcs;
+	int numberEdgesAB = 0;
+
+
+	if(!this->getIsSybil()){
+		//Se o vértice não é o honesto o valor de numberEdgesAB podera ser maior do que 0 (zero)
+
+		for(itArcs = this->arcs.begin(); itArcs != this->arcs.end(); itArcs++){
+
+			if(  (*itArcs)->getFinishVertex()->getIsSybil()){
+				//Se o vértice é honsto soma-se 1
+				numberEdgesAB++;
+			}
+
+
+		}
+
+	}else{
+		//Para um vértice não honesto o valor será igual a 0 (zero)
+
+		numberEdgesAB = 0;
+	}
+
+	return numberEdgesAB;
+
+}
+
+//Número de aresta para vértices não honesto (Sybil)
+int Vertex::getNumberEdgesBB(void){
+
+	std::set<PAA::Edge*>::iterator itArcs;
+	int numberEdgesBB = 0;
+
+	if (this->getIsSybil()) {
+		//Se o vértice não é o honesto o valor de numberEdgesAB podera ser maior do que 0 (zero)
+
+		for (itArcs = this->arcs.begin(); itArcs != this->arcs.end();
+				itArcs++) {
+
+			if ((*itArcs)->getFinishVertex()->getIsSybil()) {
+				//Se o vértice é honsto soma-se 1
+				numberEdgesBB++;
+			}
+
+		}
+
+	} else {
+		//Para um vértice não honesto o valor será igual a 0 (zero)
+
+		numberEdgesBB = 0;
+	}
+
+	return numberEdgesBB;
+}
+
 } /* namespace PAA */
