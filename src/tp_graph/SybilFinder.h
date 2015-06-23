@@ -26,10 +26,14 @@ private:
 	std::set<std::string> realSybilVertex;
 
 	//Percentual de vértices que serão utilizados como "semente"
-	const static double SEED_PERCENT = 0.2;
+	const static int NUMBER_OF_SEED = 1;
 
 
 	PAA::FileManager* fm;
+	PAA::FileManager* honestRegionFile;
+	PAA::FileManager* sybilRegionFile;
+	PAA::FileManager* metricFile;
+
 public:
 	SybilFinder();
 	void loadSybilFile(std::string&);
@@ -40,18 +44,43 @@ public:
 	const void printSeedVertexSet(void) const;
 	const void printHonestVertexSet(void) const;
 	const void printSybilVertexSet(void) const;
-	const void printCandidateVertexSet(std::set<PAA::Vertex*>&) const;
+	const void printCandidateVertexSet(std::vector<PAA::Vertex*>&) const;
+	void writeHonestVertexSet(std::string&);
+	void writeSybilVertexSet(std::string&);
+	void writeMetrics(std::string&);
+	void resetData(void);
 	virtual ~SybilFinder();
 private:
 	void addRealSybilVertex(std::string&);
 	std::set<PAA::Vertex*> chooseSeed(std::set<PAA::Vertex*>&);
-	std::set<PAA::Vertex*> getSybilCandidates(std::set<PAA::Vertex*>, std::set<PAA::Vertex*>);
-	int getSeedSize(int honestSetSize);
+	std::vector<PAA::Vertex*> getSybilCandidates(std::set<PAA::Vertex*>, std::set<PAA::Vertex*>);
+	int getSeedSize(void);
 	void addSeeds(PAA::Vertex*);
 	void setSeedsSet(std::set<PAA::Vertex*>&);
 	Vertex* addToHonestSet(PAA::Vertex*);
 	Vertex* addToSybilSet(PAA::Vertex*);
 	float calculeCondutanciaNorm(PAA::PAAGraph&);
+	float calculeMedianDegree(PAA::PAAGraph&);
+	float calculeModularity(PAA::PAAGraph&);
+	float calculeHonestCondutancia(std::set<PAA::Vertex*>&);
+	float calculeSybilCondutancia(std::set<PAA::Vertex*>&);
+	float calculeClusteringCoefficient(std::set<PAA::Vertex*>&);
+	float calculeSybilRightFraction(std::set<PAA::Vertex*>&, std::set<PAA::Vertex*>&);
+	float calculeHonestRightFraction(std::set<PAA::Vertex*>&, std::set<PAA::Vertex*>&);
+	float calculeFalsePositive(std::set<PAA::Vertex*>&, std::set<PAA::Vertex*>&);
+	float calculeFalseNegative(std::set<PAA::Vertex*>&, std::set<PAA::Vertex*>&);
+	void openRegionHonestFile(std::string&);
+	void closeRegionHonestFile(void);
+	void writeToRegionHonestFile(std::string&);
+	void openRegionSybilFile(std::string&);
+	void closeRegionSybilFile(void);
+	void writeToRegionSybilFile(std::string&);
+	void openMetricFile(std::string&);
+	void writeToMetricFile(std::string&);
+	void closeMetricFile(void);
+	void openFile(std::string&,	PAA::FileManager*);
+	void closeFile(std::string&, PAA::FileManager*);
+	void writeToFile(std::string&, PAA::FileManager*);
 
 };
 

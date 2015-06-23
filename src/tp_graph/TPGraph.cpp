@@ -156,6 +156,12 @@ void TPGraph::run(void){
 
 		sybilFinder.printSybilVertexSet();
 
+		sybilFinder.writeHonestVertexSet();
+		sybilFinder.writeSybilVertexSet();
+		sybilFinder.writeMetrics();
+
+		sybilFinder.resetData();
+
 		this->showUserMessage(ss.str());
 		this->showUserMessage("Finalizando a execução.");
 		this->setFinalTime();

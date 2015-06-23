@@ -95,10 +95,32 @@ public:
 	//Número de aresta para vértices não honesto (Sybil)
 	int getNumberEdgesBB(void);
 
+	//Número de aresta para vértices não honesto (Sybil) para vértices honestos
+	int getNumberEdgesBA(void);
+
+	//Verifica se um vértice é maior do que o outro
+	bool operator <(const PAA::Vertex*)const ;
+
+	//Retorna o grau de um vértice
+	int getDegree(void);
+
+	//Retorna o número de vértice vizinhos que atendem a regra N_i = { v_j: e_ij in E AND  e_ji in E}
+	int getNeighbourhoodLength(void);
+
+	//Calcula o coeficiente de agrupamento de um vértice
+	float getCusteringCoefficient(void);
+
+
+
 };
 
 	//Método para permitir que o vértice seja impresso em stream de saída
 	std::ostream& operator<<(std::ostream& out, const Vertex& v);
+
+	bool sortByDegree(PAA::Vertex* v1, PAA::Vertex* v2);
+
+	bool sortByName(PAA::Vertex* v1, PAA::Vertex* v2);
+
 
 } /* namespace PAA */
 

@@ -23,7 +23,7 @@ private:
 	/*Define o total k primeiros vértices que deverão ser considerados como honesto,
 	 * ou seja, NÃO-SYBIL
 	 */
-	static const int FIRSTS_HONESTS_VERTEX = 10; //
+	static const int FIRSTS_HONESTS_VERTEX = 5; //
 
 	std::set<std::string> honestSet;
 

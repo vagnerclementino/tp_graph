@@ -11,6 +11,7 @@
 #include <iostream>
 #include <math.h>
 #include <cstdlib>
+#include <algorithm>
 
 
 namespace PAA {
@@ -171,9 +172,9 @@ const void SybilFinder::printSybilVertexSet(void) const{
 
 }
 
-const void SybilFinder::printCandidateVertexSet(std::set<PAA::Vertex*>& candidateVertex) const{
+const void SybilFinder::printCandidateVertexSet(std::vector<PAA::Vertex*>& candidateVertex) const{
 
-		std::set<PAA::Vertex*>::iterator it;
+		std::vector<PAA::Vertex*>::iterator it;
 		std::stringstream ss;
 		int i = 0;
 
@@ -200,19 +201,15 @@ const void SybilFinder::printCandidateVertexSet(std::set<PAA::Vertex*>& candidat
 
 }
 
-int SybilFinder::getSeedSize(int honestSetSize){
+int SybilFinder::getSeedSize(void){
 
-	int seedSize = 0;
-
-	seedSize = (int) floor(this->SEED_PERCENT *  honestSetSize);
-
-	return seedSize;
+	return this->NUMBER_OF_SEED;
 }
 
 std::set<PAA::Vertex*> SybilFinder::chooseSeed(std::set<PAA::Vertex*>& candidateSet){
 
 	int candidateSize = candidateSet.size();
-	int seedSize = this->getSeedSize(candidateSize);
+	int seedSize = this->getSeedSize();
 	std::set<PAA::Vertex*> seeds;
 	std::vector<PAA::Vertex*> candidates;
 	int randIndex;
@@ -268,16 +265,16 @@ Vertex* SybilFinder::addToSybilSet(PAA::Vertex* v){
 }
 
 
-std::set<PAA::Vertex*> SybilFinder::getSybilCandidates(std::set<PAA::Vertex*> graphVertexSet, std::set<PAA::Vertex*> seeds){
+std::vector<PAA::Vertex*> SybilFinder::getSybilCandidates(std::set<PAA::Vertex*> graphVertexSet, std::set<PAA::Vertex*> seeds){
 
-	std::set<PAA::Vertex*> candidates;
+	std::vector<PAA::Vertex*> candidates;
 	std::set<PAA::Vertex*>::iterator it;
 
 	for(it = graphVertexSet.begin(); it != graphVertexSet.end(); it++){
 
 		if(seeds.find((*it)) == seeds.end()){
 			//Vertíce não foi encontrado poderá ser inserido
-			candidates.insert((*it));
+			candidates.push_back((*it));
 		}
 
 	}
@@ -300,9 +297,9 @@ float SybilFinder::calculeCondutanciaNorm(PAA::PAAGraph& graph){
 	int edgesBB = 0;
 
 	//Valore sem float para realizar os cálculos
-	float fEdgesAA;
-	float fEdgesAB;
-	float fEdgesBB;
+	float fEdgesAA = 0.0;
+	float fEdgesAB = 0.0;
+	float fEdgesBB = 0.0;
 
 
 	float condutanciaNormailizada = 0.0;
@@ -330,7 +327,11 @@ float SybilFinder::calculeCondutanciaNorm(PAA::PAAGraph& graph){
 	graphCondutancia =  (  ( fEdgesAA ) / ( fEdgesAA + fEdgesAB) );
 
 
-	valorEsperadoK = ( ( (fEdgesAA + fEdgesAB) * (fEdgesBB + fEdgesAB)) / ( ( (fEdgesAA + fEdgesAB) * (fEdgesAA + fEdgesAB) ) + ((fEdgesAA + fEdgesAB) * (fEdgesBB + fEdgesAB)) ));
+	valorEsperadoK = ( ( (edgesAA + edgesAB) * (edgesBB + edgesAB)) / ( ( (edgesAA + edgesAB) * (edgesAA + edgesAB) ) + ((edgesAA + edgesAB) * (edgesBB + edgesAB)) ));
+
+	std::cout << "Condutancia: " << graphCondutancia << std::endl;
+
+	std::cout << "Valor Esperado: " << valorEsperadoK << std::endl;
 
 	condutanciaNormailizada = graphCondutancia - valorEsperadoK;
 
@@ -344,8 +345,9 @@ void SybilFinder::find(PAA::PAAGraph& graph){
 
 	//Escolhendo aleatoriamente vértices como sementes
 	std::set<PAA::Vertex*> seeds = this->chooseSeed(graph.getHonestSet());//Conjunto A
-	std::set<PAA::Vertex*> sybilCandidates; // Conjuntno B = (V-A)
+	std::vector<PAA::Vertex*> sybilCandidates; // Conjuntno B = (V-A)
 	std::set<PAA::Vertex*>::iterator it;
+	std::vector<PAA::Vertex*>::iterator itVector;
 	float actualConduntanciaNorm = 0.0; //Coduntância Normalizada antes de  testar um vértice v como honesto
 	float newConduntanciaNorm = 0.0; //Condutância Normalizada apos testar um vértice v como honesto
 
@@ -368,6 +370,8 @@ void SybilFinder::find(PAA::PAAGraph& graph){
 
 	this->printCandidateVertexSet(sybilCandidates);
 
+
+
 	//Definindo as sementes como honestas
 	for(it = seeds.begin(); it != seeds.end(); it++){
 
@@ -377,12 +381,13 @@ void SybilFinder::find(PAA::PAAGraph& graph){
 
 	actualConduntanciaNorm = this->calculeCondutanciaNorm(graph);
 
+	std::cout << "Condutancia Inicial:  " << actualConduntanciaNorm << std::endl;
 
-	for(it = sybilCandidates.begin(); it != sybilCandidates.end(); it++){
+	for(itVector = sybilCandidates.begin(); itVector != sybilCandidates.end(); itVector++){
 
-		std::cout << "Vértice avaliado: " << (*it)->toString() << std::endl;
+		std::cout << "Vértice avaliado: " << (*itVector)->toString() << std::endl;
 
-		graph.setVertexAsHonest((*it)->getName());
+		graph.setVertexAsHonest((*itVector)->getName());
 
 		newConduntanciaNorm = this->calculeCondutanciaNorm(graph);
 
@@ -391,15 +396,15 @@ void SybilFinder::find(PAA::PAAGraph& graph){
 		if(newConduntanciaNorm > actualConduntanciaNorm){
 
 			//O Vértice será considerado como honesto
-			this->addToHonestSet((*it));
+			this->addToHonestSet((*itVector));
 			actualConduntanciaNorm = newConduntanciaNorm;
 
 		}else{
 			//O vértice será considerado como sybil
 
 			//Desfazendo a tentativa de que o grafo era honesto
-			graph.setVertexAsSybil((*it)->getName());
-			this->addToSybilSet((*it));
+			graph.setVertexAsSybil((*itVector)->getName());
+			this->addToSybilSet((*itVector));
 
 		}
 
@@ -445,6 +450,327 @@ void SybilFinder::addRealSybilVertex(std::string& sybil){
 
 
 }
+
+float SybilFinder::calculeMedianDegree(PAA::PAAGraph& graph){
+	int counter = 0;
+	int degreeSum =0;
+	float median;
+
+	std::set<PAA::Vertex*>::iterator it;
+
+	for(it = graph.getVertexSet().begin(); it != graph.getVertexSet().end(); it++){
+
+
+		degreeSum += (*it)->getDegree();
+		counter++;
+
+
+	}
+
+
+
+	median = float(degreeSum) / float (counter);
+
+	return median;
+
+}
+
+float SybilFinder::calculeModularity(PAA::PAAGraph& graph){
+
+	float modularity = 0.0;
+
+	std::set<PAA::Vertex*>::iterator it;
+
+    int edgesAA, edgesAB, edgesBB, edgesBA, totalEgdes;
+
+	float fEdgesAA = 0.0;
+	float fEdgesAB = 0.0;
+	float fEdgesBB = 0.0;
+	float fEdgesBA = 0.0;
+
+	float condutanciaNormailizada = 0.0;
+
+	float graphCondutancia = 0.0;
+
+	float valorEsperadoK = 0.0;
+
+	totalEgdes = 0;
+
+	for (it = graph.getVertexSet().begin(); it != graph.getVertexSet().end();
+			it++) {
+		totalEgdes += (*it)->getDegree();
+		edgesAA += (*it)->getNumberEdgesAA();
+		edgesAB += (*it)->getNumberEdgesAB();
+		edgesBB += (*it)->getNumberEdgesBB();
+		edgesBA += (*it)->getNumberEdgesBA();
+	}
+	fEdgesAA = float(edgesAA);
+
+	fEdgesAB = float(edgesAB);
+
+	fEdgesBB = float(edgesBB);
+
+	fEdgesBA = float(edgesBA);
+
+	modularity = ( (fEdgesAA + fEdgesBB) / float (totalEgdes) ) -
+				pow((float (fEdgesAA/totalEgdes)),2.0) +
+				pow((float (fEdgesAB/totalEgdes)),2.0) +
+				pow((float (fEdgesBB/totalEgdes)),2.0) +
+				pow((float (fEdgesBA/totalEgdes)),2.0);
+	return modularity;
+
+}
+
+float SybilFinder::calculeHonestCondutancia(std::set<PAA::Vertex*>& vertexSet){
+
+
+		std::set<PAA::Vertex*>::iterator it;
+
+	    int edgesAA, edgesAB;
+
+		float fEdgesAA = 0.0;
+		float fEdgesAB = 0.0;
+		float setCondutancia = 0.0;
+
+
+
+
+
+		for (it = vertexSet.begin(); it != vertexSet.end();
+				it++) {
+
+			edgesAA += (*it)->getNumberEdgesAA();
+			edgesAB += (*it)->getNumberEdgesAB();
+
+
+		}
+		fEdgesAA = float(edgesAA);
+		fEdgesAB = float(edgesAB);
+
+
+
+
+
+		setCondutancia = (fEdgesAB / fEdgesAA);
+		return setCondutancia;
+
+
+}
+
+float SybilFinder::calculeSybilCondutancia(std::set<PAA::Vertex*>& vertexSet){
+
+
+		std::set<PAA::Vertex*>::iterator it;
+
+	    int edgesBB, edgesAB;
+
+		float fEdgesBB = 0.0;
+		float fEdgesAB = 0.0;
+		float setCondutancia = 0.0;
+		for (it = vertexSet.begin(); it != vertexSet.end();it++) {
+
+			edgesBB += (*it)->getNumberEdgesBB();
+			edgesAB += (*it)->getNumberEdgesAB();
+
+		}
+		fEdgesBB = float(edgesBB);
+		fEdgesAB = float(edgesAB);
+
+		setCondutancia = (fEdgesAB / fEdgesBB);
+		return setCondutancia;
+}
+
+float SybilFinder::calculeClusteringCoefficient(std::set<PAA::Vertex*>& vertexSet){
+
+	std::set<PAA::Vertex*>::iterator it;
+	float clusteringCoefficient = 0.0;
+	int counter = 0;
+
+	for (it = vertexSet.begin(); it != vertexSet.end(); it++) {
+
+		counter++;
+		clusteringCoefficient += (*it)->getCusteringCoefficient();
+
+	}
+	if(counter == 0){
+
+		return 0.0;
+
+	}else{
+
+		return float (clusteringCoefficient/counter);
+
+	}
+
+
+}
+
+float SybilFinder::calculeSybilRightFraction(std::set<PAA::Vertex*>& sybilSet, std::set<PAA::Vertex*>& sybilRealSet){
+
+	std::set<PAA::Vertex*>::iterator it;
+	int totalSybilRealSet = sybilRealSet.size();
+	float sybilRightFraction = 0.0;
+	int sybilRightCounter = 0;
+
+	for (it = sybilSet.begin(); it != sybilSet.end(); it++){
+
+		if(sybilRealSet.find((*it)) != sybilRealSet.end()){
+			//Encontrado
+			sybilRightCounter++;
+		}
+	}
+
+    if(totalSybilRealSet == 0){
+
+    	sybilRightFraction = 0.0;
+
+    }else{
+
+    	sybilRightFraction = ( float (sybilRightCounter) / float (totalSybilRealSet) );
+	}
+
+
+	return sybilRightFraction;
+
+}
+
+float SybilFinder::calculeHonestRightFraction(std::set<PAA::Vertex*>& honestSet,
+		std::set<PAA::Vertex*>& sybilRealSet) {
+
+	std::set<PAA::Vertex*>::iterator it;
+	int totalSybilRealSet = sybilRealSet.size();
+	float honestRightFraction = 0.0;
+	int honestRightCounter = 0;
+
+	for (it = honestSet.begin(); it != honestSet.end(); it++) {
+
+
+		if (sybilRealSet.find((*it)) == sybilRealSet.end()) {
+			//Não Encontrado
+			honestRightCounter++;
+		}
+	}
+
+	if (totalSybilRealSet == 0) {
+
+		honestRightFraction = 0.0;
+
+	} else {
+
+		honestRightFraction = (float(honestRightCounter)
+				/ float(totalSybilRealSet));
+	}
+
+	return honestRightFraction;
+
+}
+
+float SybilFinder::calculeFalsePositive(std::set<PAA::Vertex*>& sybilSet, std::set<PAA::Vertex*>& realSybilSet){
+
+	float falsePositive = 0.0;
+	int counter = 0;
+	int sybilSetLength = sybilSet.size();
+	std::set<PAA::Vertex*>::iterator it;
+
+	for(it = sybilSet.begin(); it != sybilSet.end(); it++){
+
+		if(realSybilSet.find((*it)) == realSybilSet.end()){
+
+			counter++;
+
+		}
+	}
+
+	if (sybilSetLength == 0){
+
+		falsePositive = 0.0;
+	}else{
+
+		falsePositive =  ( float (counter) / float (sybilSetLength) );
+	}
+
+	return falsePositive;
+}
+
+float SybilFinder::calculeFalseNegative(std::set<PAA::Vertex*>& honestSet, std::set<PAA::Vertex*>& realSybilSet){
+
+	float falseNegative = 0.0;
+	int counter = 0;
+	int honestSetSetLength = honestSet.size();
+	std::set<PAA::Vertex*>::iterator it;
+
+	for(it = honestSet.begin(); it != honestSet.end(); it++){
+
+
+		if( honestSet.find((*it)) != honestSet.end()){
+			counter++;
+
+		}
+	}
+
+	if(honestSetSetLength == 0){
+
+		falseNegative = 0.0;
+	}else{
+
+		falseNegative = ( float (counter) / float (honestSetSetLength) );
+
+	}
+
+	return falseNegative;
+}
+
+void SybilFinder::writeHonestVertexSet(std::string& fileName){
+
+	std::stringstream ss;
+	std::set<Vertex*>::iterator it;
+
+	this->openRegionHonestFile(fileName);
+
+	for(it = this->getHonestVertexSet().begin(); it != this->getHonestVertexSet().end(); it++){
+
+		ss << (*it)->getName() << std::endl;
+	}
+
+	this->writeToRegionHonestFile(ss.str());
+
+
+    this->closeRegionHonestFile();
+}
+
+void SybilFinder::writeSybilVertexSet(std::string& fileName){
+
+	std::stringstream ss;
+	std::set<Vertex*>::iterator it;
+
+	this->openRegionSybilFile(fileName);
+
+	for (it = this->getSybiltVertexSet().begin();
+			it != this->getSybiltVertexSet().end(); it++) {
+
+		ss << (*it)->getName() << std::endl;
+	}
+
+	this->writeToRegionSybilFile(ss.str());
+
+	this->closeRegionSybilFile();
+
+
+}
+
+const void SybilFinder::writeMetrics(std::string& fileName) const{
+
+
+}
+
+void SybilFinder::resetData(void){
+
+	this->honestVertex.clear();
+	this->realSybilVertex.clear();
+	this->seeds.clear();
+	this->sybilVertex.clear();
+}
+
 
 } /* namespace PAA */
 

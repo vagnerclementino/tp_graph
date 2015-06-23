@@ -96,6 +96,17 @@ std::ostream& operator<<(std::ostream& out, const Vertex& v) {
     return out;
 }
 
+bool sortByDegree(PAA::Vertex* v1, PAA::Vertex* v2) {
+
+	return v1->getEdges().size() < v2->getEdges().size();
+}
+
+bool sortByName(PAA::Vertex* v1, PAA::Vertex* v2){
+
+	return v1->getName() < v2->getName();
+}
+
+
 
 const std::string& Vertex::getName(void)const{
 
@@ -276,7 +287,7 @@ int Vertex::getNumberEdgesBB(void){
 				itArcs++) {
 
 			if ((*itArcs)->getFinishVertex()->getIsSybil()) {
-				//Se o vértice é honsto soma-se 1
+				//Se o vértice NÃO é honsto soma-se 1
 				numberEdgesBB++;
 			}
 
@@ -290,5 +301,86 @@ int Vertex::getNumberEdgesBB(void){
 
 	return numberEdgesBB;
 }
+
+int Vertex::getNumberEdgesBA(void){
+
+	std::set<PAA::Edge*>::iterator itArcs;
+	int numberEdgesBA = 0;
+
+	if (this->getIsSybil()) {
+		//Se o vértice não é o honesto o valor de numberEdgesAB podera ser maior do que 0 (zero)
+
+		for (itArcs = this->arcs.begin(); itArcs != this->arcs.end();
+				itArcs++) {
+
+			if ( ! (*itArcs)->getFinishVertex()->getIsSybil()) {
+				//Se o vértice é honesto soma-se 1
+				numberEdgesBA++;
+			}
+
+		}
+
+	} else {
+		//Para um vértice não honesto o valor será igual a 0 (zero)
+
+		numberEdgesBA = 0;
+	}
+
+	return numberEdgesBA;
+}
+
+bool Vertex::operator <(const PAA::Vertex* other) const{
+
+
+	return (this->getEdges().size() < other->getEdges().size());
+
+
+}
+
+int Vertex::getDegree(void){
+
+	return this->getEdges().size();
+
+}
+
+int Vertex::getNeighbourhoodLength(void){
+
+	int neighbourhoodLengt = 0;
+	std::set<PAA::Edge*> edges;
+	std::set<PAA::Edge*>::iterator itEdges;
+	std::set<PAA::Edge*>::iterator itEdgesNeighbour;
+
+	edges = this->getEdges();
+	for(itEdges = edges.begin(); itEdges != edges.end(); itEdges++) {
+
+		for(itEdgesNeighbour = (*itEdges)->getStartVertex()->getEdges().begin(); itEdgesNeighbour != (*itEdges)->getStartVertex()->getEdges().end(); itEdgesNeighbour++){
+
+			if( (*itEdgesNeighbour)->getFinishVertex() == this ){
+				 neighbourhoodLengt++;
+			}
+		}
+
+	}
+
+	return neighbourhoodLengt;
+}
+
+float Vertex::getCusteringCoefficient(void){
+	float custeringCoefficient = 0.0;
+	int neighbourhoodLengt = 0;
+	int degree;
+
+	neighbourhoodLengt = this->getNeighbourhoodLength();
+	degree  = this->getDegree();
+
+	if(neighbourhoodLengt == 0){
+		custeringCoefficient =  0.0;
+	}else{
+
+		custeringCoefficient = float (degree / ( (neighbourhoodLengt) * (neighbourhoodLengt-1)) );
+	}
+	return custeringCoefficient;
+}
+
 
 } /* namespace PAA */
