@@ -21,7 +21,8 @@ OBJS=$(SRC_FOLDER)/main.o \
 	 $(SRC_FOLDER)/Edge.o \
 	 $(SRC_FOLDER)/PAAGraph.o \
 	 $(SRC_FOLDER)/TPGraph.o \
-	 $(SRC_FOLDER)/Vertex.o 
+	 $(SRC_FOLDER)/Vertex.o \
+	 $(SRC_FOLDER)/SybilFinder.o
 INPUTFILE=$(-i ../inputs/input.txt)
 OUTPUTFILE=$(-o ../outputs/output.txt) 
 
@@ -56,7 +57,10 @@ TrabalhoPratico.o: TrabalhoPratico.h TrabalhoPratico.cpp
 	@$(CC) $(CFLAGS) $(PAA_LIB_PATH)/TrabalhoPratico.cpp
 
 Edge.o: Edge.h Edge.cpp
-	@$(CC) $(CFLAGS) $(PAA_LIB_PATH)/Brain.cpp
+	@$(CC) $(CFLAGS) $(PAA_LIB_PATH)/Edge.cpp
+
+Edge.o: Vertex.h Vertex.cpp
+	@$(CC) $(CFLAGS) $(PAA_LIB_PATH)/Vertex.cpp
 
 Vertex.o: Vertex.h Vertex.cpp
 	@$(CC) $(CFLAGS) $(PAA_LIB_PATH)/TPInstance.cpp
@@ -69,6 +73,10 @@ PAAGraph.o: PAAGraph.h PAAGraph.cpp
 	
 TPGraph.o: TPGraph.h TPGraph.cpp
 	@$(CC) $(CFLAGS) $(PAA_LIB_PATH)/TPGraph.cpp
+
+SybilFinder.o: SybilFinder.h SybilFinder.cpp
+	@$(CC) $(CFLAGS) $(PAA_LIB_PATH)/SybilFinder.cpp
+
 	
 clean:
 	@echo "Removendo arquivos temporários e o executável..."
