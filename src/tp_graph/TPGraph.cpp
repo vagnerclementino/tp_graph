@@ -124,8 +124,14 @@ void TPGraph::run(void){
 	std::string graphASybilFile;
 	std::set<std::string> honestSet;
 	std::set<std::string>::iterator it;
-
+	const std::string graphARegionSybilFile = "regionSybilGA.txt";
+	const std::string graphBSybilFile = "regionSybilGB.txt";
+	const std::string graphAHonestFile = "regionHonestGA.txt";
+	const std::string graphBHonestFile = "regionHonestGB.txt";
+	const std::string graphAMetricsFile = "metricsGA.txt";
+	const std::string graphBMetricsFile = "metricsGA.txt";
 	try {
+
 		this->showUserMessage("Iniciando a execução.");
 
 		PAA::PAAGraph graph;
@@ -134,6 +140,9 @@ void TPGraph::run(void){
 
 		//Carregando os vértices e aresta do arquivo
 		graph.load(graphAFilePath);
+		graph.setHonestRegionFileName(graphAHonestFile);
+		graph.setSybilRegionFileName(graphARegionSybilFile);
+		graph.setMetricsFileName(graphAMetricsFile);
 
 		ss << "Total de vertices: " << graph.size() << std::endl;
 
@@ -156,9 +165,9 @@ void TPGraph::run(void){
 
 		sybilFinder.printSybilVertexSet();
 
-		sybilFinder.writeHonestVertexSet();
-		sybilFinder.writeSybilVertexSet();
-		sybilFinder.writeMetrics();
+		sybilFinder.writeHonestVertexSet(graph.getHonestRegionFileName());
+		sybilFinder.writeSybilVertexSet(graph.getSybilRegionFileName());
+		sybilFinder.writeMetrics(graph.getMetricsFileName(), graph);
 
 		sybilFinder.resetData();
 

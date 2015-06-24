@@ -353,9 +353,9 @@ int Vertex::getNeighbourhoodLength(void){
 	edges = this->getEdges();
 	for(itEdges = edges.begin(); itEdges != edges.end(); itEdges++) {
 
-		for(itEdgesNeighbour = (*itEdges)->getStartVertex()->getEdges().begin(); itEdgesNeighbour != (*itEdges)->getStartVertex()->getEdges().end(); itEdgesNeighbour++){
+		for(itEdgesNeighbour = (*itEdges)->getFinishVertex()->getEdges().begin(); itEdgesNeighbour != (*itEdges)->getFinishVertex()->getEdges().end(); itEdgesNeighbour++){
 
-			if( (*itEdgesNeighbour)->getFinishVertex() == this ){
+			if( (*itEdgesNeighbour)->getFinishVertex()->getName() == this->getName() ){
 				 neighbourhoodLengt++;
 			}
 		}
@@ -373,11 +373,11 @@ float Vertex::getCusteringCoefficient(void){
 	neighbourhoodLengt = this->getNeighbourhoodLength();
 	degree  = this->getDegree();
 
-	if(neighbourhoodLengt == 0){
+	if(neighbourhoodLengt == 0 || neighbourhoodLengt == 1 ){
 		custeringCoefficient =  0.0;
 	}else{
 
-		custeringCoefficient = float (degree / ( (neighbourhoodLengt) * (neighbourhoodLengt-1)) );
+		custeringCoefficient = float ( float(degree) /  float ( (neighbourhoodLengt) * (neighbourhoodLengt-1)) );
 	}
 	return custeringCoefficient;
 }

@@ -20,6 +20,9 @@ class PAAGraph: public Graph<PAA::Vertex, PAA::Edge> {
 private:
 	bool resetEnabled;
 	PAA::FileManager* fm;
+	std::string sybilRegionFileName;
+	std::string honestRegionFileName;
+	std::string metricsFileName;
 	/*Define o total k primeiros vértices que deverão ser considerados como honesto,
 	 * ou seja, NÃO-SYBIL
 	 */
@@ -100,8 +103,12 @@ public:
 	std::set<PAA::Vertex*>& getHonestSet();
 
 	void printHonestSet(void) const;
-
-
+	const std::string& getHonestRegionFileName() const;
+	void setHonestRegionFileName(const std::string& honestRegionFileName);
+	const std::string& getMetricsFileName() const;
+	void setMetricsFileName(const std::string& metricsFileName);
+	const std::string& getSybilRegionFileName() const;
+	void setSybilRegionFileName(const std::string& sybilRegionFileName);
 };
 
 } /* namespace PAA */

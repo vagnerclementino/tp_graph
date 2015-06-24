@@ -45,11 +45,14 @@ public:
 	const void printHonestVertexSet(void) const;
 	const void printSybilVertexSet(void) const;
 	const void printCandidateVertexSet(std::vector<PAA::Vertex*>&) const;
-	void writeHonestVertexSet(std::string&);
-	void writeSybilVertexSet(std::string&);
-	void writeMetrics(std::string&);
+	void writeHonestVertexSet(const std::string&);
+	void writeSybilVertexSet(const std::string&);
+	void writeMetrics(const std::string&, PAA::PAAGraph&);
 	void resetData(void);
 	virtual ~SybilFinder();
+	const std::set<std::string>& getRealSybilVertex() const;
+	void setRealSybilVertex(const std::set<std::string>& realSybilVertex);
+
 private:
 	void addRealSybilVertex(std::string&);
 	std::set<PAA::Vertex*> chooseSeed(std::set<PAA::Vertex*>&);
@@ -62,25 +65,26 @@ private:
 	float calculeCondutanciaNorm(PAA::PAAGraph&);
 	float calculeMedianDegree(PAA::PAAGraph&);
 	float calculeModularity(PAA::PAAGraph&);
-	float calculeHonestCondutancia(std::set<PAA::Vertex*>&);
-	float calculeSybilCondutancia(std::set<PAA::Vertex*>&);
-	float calculeClusteringCoefficient(std::set<PAA::Vertex*>&);
-	float calculeSybilRightFraction(std::set<PAA::Vertex*>&, std::set<PAA::Vertex*>&);
-	float calculeHonestRightFraction(std::set<PAA::Vertex*>&, std::set<PAA::Vertex*>&);
-	float calculeFalsePositive(std::set<PAA::Vertex*>&, std::set<PAA::Vertex*>&);
-	float calculeFalseNegative(std::set<PAA::Vertex*>&, std::set<PAA::Vertex*>&);
-	void openRegionHonestFile(std::string&);
+	float calculeHonestCondutancia(const std::set<PAA::Vertex*>&);
+	float calculeSybilCondutancia(const std::set<PAA::Vertex*>&);
+	float calculeClusteringCoefficient(const std::set<PAA::Vertex*>&);
+	float calculeSybilRightFraction(const std::set<PAA::Vertex*>&, const std::set<std::string>&);
+	float calculeHonestRightFraction(const std::set<PAA::Vertex*>&, const std::set<std::string>&);
+	float calculeFalsePositive(const std::set<PAA::Vertex*>&,const  std::set<std::string>&);
+	float calculeFalseNegative(const std::set<PAA::Vertex*>&, const std::set<std::string>&);
+	void openRegionHonestFile(const std::string&);
 	void closeRegionHonestFile(void);
-	void writeToRegionHonestFile(std::string&);
-	void openRegionSybilFile(std::string&);
+	void writeToRegionHonestFile(const std::string&);
+	void openRegionSybilFile(const std::string&);
 	void closeRegionSybilFile(void);
-	void writeToRegionSybilFile(std::string&);
-	void openMetricFile(std::string&);
-	void writeToMetricFile(std::string&);
+	void writeToRegionSybilFile(const std::string&);
+	void openMetricFile(const std::string&);
+	void writeToMetricFile(const std::string&);
 	void closeMetricFile(void);
-	void openFile(std::string&,	PAA::FileManager*);
-	void closeFile(std::string&, PAA::FileManager*);
-	void writeToFile(std::string&, PAA::FileManager*);
+	void openFile(const std::string&,	PAA::FileManager*);
+	void closeFile(PAA::FileManager*);
+	void writeToFile(const std::string&, PAA::FileManager*);
+	void copySetToVector(std::vector<PAA::Vertex*>&, const std::set<PAA::Vertex*>&);
 
 };
 

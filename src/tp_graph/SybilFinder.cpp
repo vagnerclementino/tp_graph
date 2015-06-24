@@ -23,12 +23,19 @@ SybilFinder::SybilFinder() {
 	this->sybilVertex     =  std::set<PAA::Vertex*> ();
 	this->seeds        	  =  std::set<PAA::Vertex*> ();
 	this->realSybilVertex =  std::set<std::string> ();
-	this->fm			  =  new PAA::FileManager();
+	this->honestRegionFile = new PAA::FileManager();
+	this->sybilRegionFile = new PAA::FileManager();
+	this->metricFile	  = new PAA::FileManager();
+	this->fm 		      = new PAA::FileManager();
 }
 
 SybilFinder::~SybilFinder() {
 
-	delete this->fm;
+
+	delete this->honestRegionFile;
+	delete this->sybilRegionFile;
+    delete this->metricFile;
+    delete this->fm;
 
 }
 
@@ -521,7 +528,7 @@ float SybilFinder::calculeModularity(PAA::PAAGraph& graph){
 
 }
 
-float SybilFinder::calculeHonestCondutancia(std::set<PAA::Vertex*>& vertexSet){
+float SybilFinder::calculeHonestCondutancia(const std::set<PAA::Vertex*>& vertexSet){
 
 
 		std::set<PAA::Vertex*>::iterator it;
@@ -557,7 +564,7 @@ float SybilFinder::calculeHonestCondutancia(std::set<PAA::Vertex*>& vertexSet){
 
 }
 
-float SybilFinder::calculeSybilCondutancia(std::set<PAA::Vertex*>& vertexSet){
+float SybilFinder::calculeSybilCondutancia(const std::set<PAA::Vertex*>& vertexSet){
 
 
 		std::set<PAA::Vertex*>::iterator it;
@@ -580,7 +587,7 @@ float SybilFinder::calculeSybilCondutancia(std::set<PAA::Vertex*>& vertexSet){
 		return setCondutancia;
 }
 
-float SybilFinder::calculeClusteringCoefficient(std::set<PAA::Vertex*>& vertexSet){
+float SybilFinder::calculeClusteringCoefficient(const std::set<PAA::Vertex*>& vertexSet){
 
 	std::set<PAA::Vertex*>::iterator it;
 	float clusteringCoefficient = 0.0;
@@ -598,14 +605,14 @@ float SybilFinder::calculeClusteringCoefficient(std::set<PAA::Vertex*>& vertexSe
 
 	}else{
 
-		return float (clusteringCoefficient/counter);
+		return float (clusteringCoefficient) / float (counter);
 
 	}
 
 
 }
 
-float SybilFinder::calculeSybilRightFraction(std::set<PAA::Vertex*>& sybilSet, std::set<PAA::Vertex*>& sybilRealSet){
+float SybilFinder::calculeSybilRightFraction(const std::set<PAA::Vertex*>& sybilSet, const std::set<std::string>& sybilRealSet){
 
 	std::set<PAA::Vertex*>::iterator it;
 	int totalSybilRealSet = sybilRealSet.size();
@@ -614,7 +621,7 @@ float SybilFinder::calculeSybilRightFraction(std::set<PAA::Vertex*>& sybilSet, s
 
 	for (it = sybilSet.begin(); it != sybilSet.end(); it++){
 
-		if(sybilRealSet.find((*it)) != sybilRealSet.end()){
+		if(sybilRealSet.find((*it)->getName()) != sybilRealSet.end()){
 			//Encontrado
 			sybilRightCounter++;
 		}
@@ -634,8 +641,7 @@ float SybilFinder::calculeSybilRightFraction(std::set<PAA::Vertex*>& sybilSet, s
 
 }
 
-float SybilFinder::calculeHonestRightFraction(std::set<PAA::Vertex*>& honestSet,
-		std::set<PAA::Vertex*>& sybilRealSet) {
+float SybilFinder::calculeHonestRightFraction(const std::set<PAA::Vertex*>& honestSet, const std::set<std::string>& sybilRealSet) {
 
 	std::set<PAA::Vertex*>::iterator it;
 	int totalSybilRealSet = sybilRealSet.size();
@@ -645,7 +651,7 @@ float SybilFinder::calculeHonestRightFraction(std::set<PAA::Vertex*>& honestSet,
 	for (it = honestSet.begin(); it != honestSet.end(); it++) {
 
 
-		if (sybilRealSet.find((*it)) == sybilRealSet.end()) {
+		if (sybilRealSet.find((*it)->getName()) == sybilRealSet.end()) {
 			//Não Encontrado
 			honestRightCounter++;
 		}
@@ -665,7 +671,7 @@ float SybilFinder::calculeHonestRightFraction(std::set<PAA::Vertex*>& honestSet,
 
 }
 
-float SybilFinder::calculeFalsePositive(std::set<PAA::Vertex*>& sybilSet, std::set<PAA::Vertex*>& realSybilSet){
+float SybilFinder::calculeFalsePositive(const std::set<PAA::Vertex*>& sybilSet, const std::set<std::string>& realSybilSet){
 
 	float falsePositive = 0.0;
 	int counter = 0;
@@ -674,7 +680,7 @@ float SybilFinder::calculeFalsePositive(std::set<PAA::Vertex*>& sybilSet, std::s
 
 	for(it = sybilSet.begin(); it != sybilSet.end(); it++){
 
-		if(realSybilSet.find((*it)) == realSybilSet.end()){
+		if(realSybilSet.find((*it)->getName()) == realSybilSet.end()){
 
 			counter++;
 
@@ -692,7 +698,7 @@ float SybilFinder::calculeFalsePositive(std::set<PAA::Vertex*>& sybilSet, std::s
 	return falsePositive;
 }
 
-float SybilFinder::calculeFalseNegative(std::set<PAA::Vertex*>& honestSet, std::set<PAA::Vertex*>& realSybilSet){
+float SybilFinder::calculeFalseNegative(const std::set<PAA::Vertex*>& honestSet, const std::set<std::string>& realSybilSet){
 
 	float falseNegative = 0.0;
 	int counter = 0;
@@ -702,7 +708,7 @@ float SybilFinder::calculeFalseNegative(std::set<PAA::Vertex*>& honestSet, std::
 	for(it = honestSet.begin(); it != honestSet.end(); it++){
 
 
-		if( honestSet.find((*it)) != honestSet.end()){
+		if( realSybilSet.find((*it)->getName()) != realSybilSet.end()){
 			counter++;
 
 		}
@@ -720,14 +726,18 @@ float SybilFinder::calculeFalseNegative(std::set<PAA::Vertex*>& honestSet, std::
 	return falseNegative;
 }
 
-void SybilFinder::writeHonestVertexSet(std::string& fileName){
+void SybilFinder::writeHonestVertexSet(const std::string& fileName){
 
 	std::stringstream ss;
-	std::set<Vertex*>::iterator it;
-
+	std::vector<Vertex*>::iterator it;
+	std::vector<PAA::Vertex*> outputVector;
 	this->openRegionHonestFile(fileName);
 
-	for(it = this->getHonestVertexSet().begin(); it != this->getHonestVertexSet().end(); it++){
+	this->copySetToVector(outputVector,this->getHonestVertexSet());
+
+	std::sort(outputVector.begin(),outputVector.end(), sortByName);
+
+	for(it = outputVector.begin(); it != outputVector.end(); it++){
 
 		ss << (*it)->getName() << std::endl;
 	}
@@ -738,15 +748,44 @@ void SybilFinder::writeHonestVertexSet(std::string& fileName){
     this->closeRegionHonestFile();
 }
 
-void SybilFinder::writeSybilVertexSet(std::string& fileName){
+void SybilFinder::closeRegionSybilFile(void){
+
+	try {
+
+		this->closeFile(this->sybilRegionFile);
+
+	} catch (const PAA::PAAException& e) {
+
+		throw new PAA::PAAException(e.getDebugMessage());
+	}
+
+}
+
+void SybilFinder::closeRegionHonestFile(void){
+
+	try {
+
+		this->closeFile(this->honestRegionFile);
+
+	} catch (const PAA::PAAException& e) {
+
+		throw new PAA::PAAException(e.getDebugMessage());
+	}
+
+}
+
+void SybilFinder::writeSybilVertexSet(const std::string& fileName){
 
 	std::stringstream ss;
-	std::set<Vertex*>::iterator it;
-
+	std::vector<Vertex*>::iterator it;
+	std::vector<PAA::Vertex*> outputVector;
 	this->openRegionSybilFile(fileName);
 
-	for (it = this->getSybiltVertexSet().begin();
-			it != this->getSybiltVertexSet().end(); it++) {
+	this->copySetToVector(outputVector, this->getSybiltVertexSet());
+
+	std::sort(outputVector.begin(), outputVector.end(), sortByName);
+
+	for (it = outputVector.begin(); it != outputVector.end(); it++) {
 
 		ss << (*it)->getName() << std::endl;
 	}
@@ -758,8 +797,108 @@ void SybilFinder::writeSybilVertexSet(std::string& fileName){
 
 }
 
-const void SybilFinder::writeMetrics(std::string& fileName) const{
+void SybilFinder::writeMetrics(const std::string& fileName, PAA::PAAGraph& graph){
 
+	std::stringstream ss;
+
+	try {
+		this->openMetricFile(fileName);
+
+		//(a) grau médio dos vértices;
+		ss << this->calculeMedianDegree(graph) << std::endl;
+
+		//(b) modularidade;
+		ss << this->calculeModularity(graph) << std::endl;
+
+		//(c) condutância da região Sybil;
+		ss << this->calculeSybilCondutancia(this->getSybiltVertexSet()) << std::endl;
+
+		//(d) condutância da região honesta;
+		ss << this->calculeHonestCondutancia(this->getHonestVertexSet()) << std::endl;
+
+		//(e) coeficiente de agrupamento da região Sybil;
+		ss << this->calculeClusteringCoefficient(this->getSybiltVertexSet()) << std::endl;;
+
+		//(f) coeficiente de agrupamento da região honesta;
+		ss << this->calculeClusteringCoefficient(this->getHonestVertexSet()) << std::endl;;
+
+		//(g) fração de vértices Sybil corretamente classificados;
+		ss << this->calculeSybilRightFraction(this->getSybiltVertexSet(), this->getRealSybilVertex()) << std::endl;;
+
+		//(h) fração de vértices honestos corretamente classificados;
+		ss << this->calculeHonestRightFraction(this->getHonestVertexSet(), this->getRealSybilVertex()) << std::endl;;
+
+		//(i) fração de falsos positivos (vértices honestos identificados de forma incorreta como Sybil);
+		ss << this->calculeFalsePositive(this->getSybiltVertexSet(), this->getRealSybilVertex()) << std::endl;;
+
+		//(j) fração de falsos negativos (vértices Sybil identificados de forma incorreta como honestos).
+		ss << this->calculeFalseNegative(this->getHonestVertexSet(), this->getRealSybilVertex()) << std::endl;;
+
+		//Escreve para o arquivo
+		this->writeToFile(ss.str(), this->metricFile);
+
+		this->closeMetricFile();
+
+	} catch (const PAA::PAAException& e) {
+
+		throw new PAA::PAAException(e.getDebugMessage());
+	}
+
+
+
+}
+
+void SybilFinder::openRegionHonestFile(const std::string& fileName){
+
+	try {
+
+		this->openFile(fileName, this->honestRegionFile);
+
+	} catch (const PAA::PAAException& e) {
+
+		throw new PAA::PAAException(e.getDebugMessage());
+	}
+
+
+}
+
+void SybilFinder::openRegionSybilFile(const std::string& fileName){
+
+	try {
+
+			this->openFile(fileName, this->sybilRegionFile);
+
+		} catch (const PAA::PAAException& e) {
+
+			throw new PAA::PAAException(e.getDebugMessage());
+		}
+
+
+}
+
+void SybilFinder::writeToRegionHonestFile(const std::string& text){
+
+	try {
+
+		this->writeToFile(text,this->honestRegionFile);
+
+	} catch (const PAA::PAAException& e) {
+
+		throw new PAA::PAAException(e.getDebugMessage());
+	}
+
+}
+
+void SybilFinder::writeToRegionSybilFile(const std::string& text){
+
+	try {
+
+		this->writeToFile(text,this->sybilRegionFile);
+
+	} catch (const PAA::PAAException& e) {
+
+		throw new PAA::PAAException(e.getDebugMessage());
+	}
 
 }
 
@@ -771,6 +910,86 @@ void SybilFinder::resetData(void){
 	this->sybilVertex.clear();
 }
 
+void SybilFinder::copySetToVector(std::vector<PAA::Vertex*>& destVector, const std::set<PAA::Vertex*>& sourceSet){
+
+	std::copy(sourceSet.begin(), sourceSet.end(), std::back_inserter(destVector));
+
+
+}
+
+void SybilFinder::closeFile(PAA::FileManager* fm){
+
+	try {
+
+		fm->closeFile();
+
+	} catch (const PAA::PAAException& e) {
+
+		throw new PAA::PAAException(e.getDebugMessage());
+	}
+
+}
+
+void SybilFinder::writeToFile(const std::string& text, PAA::FileManager* fm){
+
+	try {
+
+		fm->writeToFile(text);
+
+	} catch (const PAA::PAAException& e) {
+
+		throw new PAA::PAAException(e.getDebugMessage());
+	}
+
+
+}
+
+void SybilFinder::openFile(const std::string& fileName,	PAA::FileManager* fm){
+
+	try {
+
+		fm->openFile(fileName, 'W');
+
+	} catch (const PAA::PAAException& e) {
+
+		throw new PAA::PAAException(e.getDebugMessage());
+	}
+
+}
+
+void SybilFinder::openMetricFile(const std::string& fileName){
+
+	try {
+
+		this->openFile(fileName, this->metricFile);
+
+	} catch (const PAA::PAAException& e) {
+
+		throw new PAA::PAAException(e.getDebugMessage());
+	}
+}
+
+void SybilFinder::closeMetricFile(void){
+
+	try {
+
+		this->closeFile(this->metricFile);
+
+	} catch (const PAA::PAAException& e) {
+
+		throw new PAA::PAAException(e.getDebugMessage());
+	}
+
+
+}
 
 } /* namespace PAA */
 
+const std::set<std::string>& PAA::SybilFinder::getRealSybilVertex() const {
+	return realSybilVertex;
+}
+
+void PAA::SybilFinder::setRealSybilVertex(
+		const std::set<std::string>& realSybilVertex) {
+	this->realSybilVertex = realSybilVertex;
+}

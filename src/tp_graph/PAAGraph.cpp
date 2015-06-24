@@ -306,6 +306,31 @@ std::set<PAA::Vertex*>& PAAGraph::getHonestSet(){
 	return resultSet;
 }
 
+const std::string& PAAGraph::getHonestRegionFileName() const {
+	return honestRegionFileName;
+}
+
+void PAAGraph::setHonestRegionFileName(
+		const std::string& honestRegionFileName) {
+	this->honestRegionFileName = honestRegionFileName;
+}
+
+const std::string& PAAGraph::getMetricsFileName() const {
+	return metricsFileName;
+}
+
+void PAAGraph::setMetricsFileName(const std::string& metricsFileName) {
+	this->metricsFileName = metricsFileName;
+}
+
+const std::string& PAAGraph::getSybilRegionFileName() const {
+	return sybilRegionFileName;
+}
+
+void PAAGraph::setSybilRegionFileName(const std::string& sybilRegionFileName) {
+	this->sybilRegionFileName = sybilRegionFileName;
+}
+
 void PAAGraph::printHonestSet(void) const{
 	std::set<std::string>::iterator it;
 		std::stringstream ss;
