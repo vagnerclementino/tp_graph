@@ -119,57 +119,85 @@ void TPGraph::showStatistics(void){
 
 void TPGraph::run(void){
 	std::stringstream ss;
-	//string do caminho do arquivo para o Grafo A
-	std::string graphAFilePath;
-	std::string graphASybilFile;
-	std::set<std::string> honestSet;
-	std::set<std::string>::iterator it;
 	const std::string graphARegionSybilFile = "regionSybilGA.txt";
 	const std::string graphBSybilFile = "regionSybilGB.txt";
 	const std::string graphAHonestFile = "regionHonestGA.txt";
 	const std::string graphBHonestFile = "regionHonestGB.txt";
 	const std::string graphAMetricsFile = "metricsGA.txt";
-	const std::string graphBMetricsFile = "metricsGA.txt";
+	const std::string graphBMetricsFile = "metricsGB.txt";
+
+	std::string graphFilePath; //string do caminho dos dados dos grafos
+	std::string graphSybilFile;	// string do caminho do arquivo texto dos dados dos sybil reais
+	PAA::PAAGraph graphA;
+	PAA::PAAGraph graphB;
+	PAA::SybilFinder sybilFinder;
 	try {
 
 		this->showUserMessage("Iniciando a execução.");
 
-		PAA::PAAGraph graph;
-		PAA::SybilFinder sybilFinder;
-		graphAFilePath = this->getGraphAFileName();
-
-		//Carregando os vértices e aresta do arquivo
-		graph.load(graphAFilePath);
-		graph.setHonestRegionFileName(graphAHonestFile);
-		graph.setSybilRegionFileName(graphARegionSybilFile);
-		graph.setMetricsFileName(graphAMetricsFile);
-
-		ss << "Total de vertices: " << graph.size() << std::endl;
+		//Definindo os arquivos de saida
+		graphA.setHonestRegionFileName(graphAHonestFile);
+		graphA.setSybilRegionFileName(graphARegionSybilFile);
+		graphA.setMetricsFileName(graphAMetricsFile);
 
 
-		ss << "Total de vertices honesto: " << graph.sizeHonestVertex() << std::endl;
+		this->showUserMessage("Iniciando a verificação do GRAFO A.");
 
-		graph.printHonestSet();
+		//Definindo o arquivo de carga do GRAFO A
+		graphFilePath = this->getGraphAFileName();
 
-		graphASybilFile = this->getGraphASybilName();
+		//Definindo o arquivo Sybil para o GRAFO A
+		graphSybilFile = this->getGraphASybilName();
 
-		sybilFinder.loadSybilFile(graphASybilFile);
+		//Carregando os vértices e aresta do arquivo para o GRAFO A
+		graphA.load(graphFilePath);
 
-		sybilFinder.find(graph);
+		//Carregando os arquivo dos Sybils Reais para o SybilFinder
+		sybilFinder.loadSybilFile(graphSybilFile);
 
-		sybilFinder.printSeedVertexSet();
+		//Localizando os Sybil para o GRAFO A
+		sybilFinder.find(graphA);
 
-		sybilFinder.printRealSybilVertexSet();
+		//Escrevendo os dados recuperados nos respectivos arquivos
+		sybilFinder.writeHonestVertexSet(graphA.getHonestRegionFileName());
+		sybilFinder.writeSybilVertexSet(graphA.getSybilRegionFileName());
+		sybilFinder.writeMetrics(graphA.getMetricsFileName(), graphA);
 
-		sybilFinder.printHonestVertexSet();
+		this->showUserMessage("Finalizando a verificação do GRAFO A.");
 
-		sybilFinder.printSybilVertexSet();
-
-		sybilFinder.writeHonestVertexSet(graph.getHonestRegionFileName());
-		sybilFinder.writeSybilVertexSet(graph.getSybilRegionFileName());
-		sybilFinder.writeMetrics(graph.getMetricsFileName(), graph);
+		/********************FIM GRAFO A**********************************/
 
 		sybilFinder.resetData();
+
+		/*********************INICIO GRAFO B****************************/
+		this->showUserMessage("Iniciando a verificação do GRAFO B.");
+
+		//Definindo os arquivos de saida
+		graphB.setHonestRegionFileName(graphBHonestFile);
+		graphB.setSybilRegionFileName(graphBSybilFile);
+		graphB.setMetricsFileName(graphBMetricsFile);
+
+		//Definindo o arquivo de carga do GRAFO A
+		graphFilePath = this->getGraphBFileName();
+
+		//Definindo o arquivo Sybil para o GRAFO A
+		graphSybilFile = this->getGraphBSybilName();
+
+		//Carregando os vértices e aresta do arquivo para o GRAFO A
+		graphB.load(graphFilePath);
+
+		//Carregando os arquivo dos Sybils Reais para o SybilFinder
+		sybilFinder.loadSybilFile(graphSybilFile);
+
+		//Localizando os Sybil para o GRAFO A
+		sybilFinder.find(graphB);
+
+		//Escrevendo os dados recuperados nos respectivos arquivos
+		sybilFinder.writeHonestVertexSet(graphB.getHonestRegionFileName());
+		sybilFinder.writeSybilVertexSet(graphB.getSybilRegionFileName());
+		sybilFinder.writeMetrics(graphB.getMetricsFileName(), graphB);
+		this->showUserMessage("Finalizando a verificação do GRAFO B.");
+
 
 		this->showUserMessage(ss.str());
 		this->showUserMessage("Finalizando a execução.");

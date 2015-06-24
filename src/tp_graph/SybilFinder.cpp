@@ -213,39 +213,54 @@ int SybilFinder::getSeedSize(void){
 	return this->NUMBER_OF_SEED;
 }
 
-std::set<PAA::Vertex*> SybilFinder::chooseSeed(std::set<PAA::Vertex*>& candidateSet){
+std::set<PAA::Vertex*> SybilFinder::chooseSeed(std::set<PAA::Vertex*> candidateSet){
 
 	int candidateSize = candidateSet.size();
 	int seedSize = this->getSeedSize();
 	std::set<PAA::Vertex*> seeds;
 	std::vector<PAA::Vertex*> candidates;
+	std::set<PAA::Vertex*>::iterator it;
 	int randIndex;
 	srand(time(0));
 
-	if(!candidateSet.empty()  && seedSize > 0){
+	try {
+
+		if(!candidateSet.empty()  && seedSize > 0){
 
 
 
-		//Copiando de set para vector
-		std::copy(candidateSet.begin(), candidateSet.end(), std::back_inserter(candidates));
+			//Copiando de set para vector
+			for(it = candidateSet.begin(); it != candidateSet.end(); it++){
 
-		//Criando um vetor para definir se a posicao i do vector candidates foi escolhida
-		std::vector<bool> selected (candidates.size(),false);
-
-		while(int(seeds.size()) < seedSize){
-
-			randIndex = (rand() % candidateSize);
-
-			if(!selected.at(randIndex)){
-
-				seeds.insert(candidates.at(randIndex));
-				selected.at(randIndex) = true;
+				candidates.push_back((*it));
 			}
 
+			//Criando um vetor para definir se a posicao i do vector candidates foi escolhida
+			std::vector<bool> selected (candidates.size(),false);
 
-		}
+			while(int(seeds.size()) < seedSize){
 
-}
+				randIndex = (rand() % candidateSize);
+
+				if(!selected.at(randIndex)){
+
+					seeds.insert(candidates.at(randIndex));
+					selected.at(randIndex) = true;
+				}
+
+
+			}
+
+	}
+
+	} catch (const std::exception& e) {
+
+		std::cout << e.what() << std::endl;
+
+
+	}
+
+
 
 	return seeds;
 }
@@ -336,9 +351,9 @@ float SybilFinder::calculeCondutanciaNorm(PAA::PAAGraph& graph){
 
 	valorEsperadoK = ( ( (edgesAA + edgesAB) * (edgesBB + edgesAB)) / ( ( (edgesAA + edgesAB) * (edgesAA + edgesAB) ) + ((edgesAA + edgesAB) * (edgesBB + edgesAB)) ));
 
-	std::cout << "Condutancia: " << graphCondutancia << std::endl;
+	//std::cout << "Condutancia: " << graphCondutancia << std::endl;
 
-	std::cout << "Valor Esperado: " << valorEsperadoK << std::endl;
+	//std::cout << "Valor Esperado: " << valorEsperadoK << std::endl;
 
 	condutanciaNormailizada = graphCondutancia - valorEsperadoK;
 
@@ -370,12 +385,12 @@ void SybilFinder::find(PAA::PAAGraph& graph){
 	//Armazenando as sementes
 	this->setSeedsSet(seeds);
 
-	this->printSeedVertexSet();
+	//this->printSeedVertexSet();
 
 	//Recuperando os candidados C = V - S, onde S são as sementes
 	sybilCandidates = this->getSybilCandidates(graph.getVertexSet(),seeds);
 
-	this->printCandidateVertexSet(sybilCandidates);
+	//this->printCandidateVertexSet(sybilCandidates);
 
 
 
@@ -388,17 +403,17 @@ void SybilFinder::find(PAA::PAAGraph& graph){
 
 	actualConduntanciaNorm = this->calculeCondutanciaNorm(graph);
 
-	std::cout << "Condutancia Inicial:  " << actualConduntanciaNorm << std::endl;
+	//std::cout << "Condutancia Inicial:  " << actualConduntanciaNorm << std::endl;
 
 	for(itVector = sybilCandidates.begin(); itVector != sybilCandidates.end(); itVector++){
 
-		std::cout << "Vértice avaliado: " << (*itVector)->toString() << std::endl;
+		//std::cout << "Vértice avaliado: " << (*itVector)->toString() << std::endl;
 
 		graph.setVertexAsHonest((*itVector)->getName());
 
 		newConduntanciaNorm = this->calculeCondutanciaNorm(graph);
 
-		std::cout << "Nova Condutância: " << newConduntanciaNorm << std::endl;
+		//std::cout << "Nova Condutância: " << newConduntanciaNorm << std::endl;
 
 		if(newConduntanciaNorm > actualConduntanciaNorm){
 

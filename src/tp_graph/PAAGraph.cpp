@@ -293,7 +293,7 @@ int PAAGraph::sizeHonestVertex(void){
 
 }
 
-std::set<PAA::Vertex*>& PAAGraph::getHonestSet(){
+std::set<PAA::Vertex*> PAAGraph::getHonestSet(){
 
 	std::set<PAA::Vertex*> resultSet;
 	std::set<std::string>::iterator it;
@@ -381,10 +381,12 @@ void PAAGraph::load(const std::string& filePath){
 			 line = this->fm->readLine();
 			 if(!line.empty()){
 
-				std::cout << line << " - " << line.size() << std::endl;
+				//std::cout << line << " - " << line.size() << std::endl;
+
+
 				//Copiando os valores lidos para o vector valuesRead
 				valuesRead = this->fm->splitString(line.c_str(), delimiter);
-				std::cout << "Tamanho valores lido: " << valuesRead.size() << std::endl;
+				//std::cout << "Tamanho valores lido: " << valuesRead.size() << std::endl;
 
 				for(itStr = valuesRead.begin(); itStr != valuesRead.end(); itStr++){
 
@@ -393,12 +395,12 @@ void PAAGraph::load(const std::string& filePath){
 						vertexOriginName = (*itStr);
 
 						//
-						if (vertexHonestInserted
-								< this->FIRSTS_HONESTS_VERTEX) {
+						if (vertexHonestInserted < this->FIRSTS_HONESTS_VERTEX) {
 
 							//Inserido um vértice honesto
 							this->addToHonestSet(vertexOriginName);
 							vertexHonestInserted++;
+							//std::cout << "Vertice Honesto Inserido" << vertexOriginName << std::endl;
 
 						}
 
@@ -408,12 +410,12 @@ void PAAGraph::load(const std::string& filePath){
 
 						}
 
-						if (vertexAux) {
+						/*if (vertexAux) {
 
 
 							std::cout << vertexAux->toString() << std::endl;
 
-						}
+						}*/
 						isVertexSource = false;
 					}else{
 
@@ -422,11 +424,11 @@ void PAAGraph::load(const std::string& filePath){
 						}
 						//Incluíndo aresta entre os vértices
 						edgeAux = this->addEdge(vertexOriginName, (*itStr), 1.0,true);
-						if (edgeAux) {
+						/*if (edgeAux) {
 
 							std::cout << edgeAux->toString() << std::endl;
 
-						}
+						}*/
 
 					}
 				}

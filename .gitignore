@@ -29,4 +29,8 @@
 .*
 .gitignore
 Debug
-*.~
+*.~*
+bin/*
+execute.sh~
+paa.log~
+.gitignore

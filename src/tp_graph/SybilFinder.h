@@ -26,7 +26,7 @@ private:
 	std::set<std::string> realSybilVertex;
 
 	//Percentual de vértices que serão utilizados como "semente"
-	const static int NUMBER_OF_SEED = 1;
+	const static int NUMBER_OF_SEED = 20;
 
 
 	PAA::FileManager* fm;
@@ -55,7 +55,7 @@ public:
 
 private:
 	void addRealSybilVertex(std::string&);
-	std::set<PAA::Vertex*> chooseSeed(std::set<PAA::Vertex*>&);
+	std::set<PAA::Vertex*> chooseSeed(std::set<PAA::Vertex*>);
 	std::vector<PAA::Vertex*> getSybilCandidates(std::set<PAA::Vertex*>, std::set<PAA::Vertex*>);
 	int getSeedSize(void);
 	void addSeeds(PAA::Vertex*);

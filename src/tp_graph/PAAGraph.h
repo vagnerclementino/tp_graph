@@ -26,7 +26,7 @@ private:
 	/*Define o total k primeiros vértices que deverão ser considerados como honesto,
 	 * ou seja, NÃO-SYBIL
 	 */
-	static const int FIRSTS_HONESTS_VERTEX = 5; //
+	static const int FIRSTS_HONESTS_VERTEX = 100; //
 
 	std::set<std::string> honestSet;
 
@@ -100,7 +100,7 @@ public:
 
 	int sizeHonestVertex(void);
 
-	std::set<PAA::Vertex*>& getHonestSet();
+	std::set<PAA::Vertex*> getHonestSet();
 
 	void printHonestSet(void) const;
 	const std::string& getHonestRegionFileName() const;
