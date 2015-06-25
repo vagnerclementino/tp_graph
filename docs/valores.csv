@@ -1,0 +1,4 @@
+,MÉTRICAS,,,,,,,,,
+GRAFO,grau médio dos vértices,modularidade,Condutância Sybil,Condutância Honesta ,Coef. Agrup Sybil,Coef. Agrup Honesto,Sybil Corretos,Honestos Corretos ,falsos positivos,falsos negativos
+A,15.7708,"0,825",14765.7,16276.9,0.0912714,0.0959462,1,"0,09766",0.474333,0
+B,15.9552,0.899	,16135,12504.3,0.0891779,0.0937305,1,0.86,0.122807,0
